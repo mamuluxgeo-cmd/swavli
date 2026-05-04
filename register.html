@@ -61,6 +61,30 @@
     .success-card a  { display: inline-block; background: #0F6E56; color: #fff; padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 600; }
     .info-box { background: #f8f8f5; border-radius: 10px; padding: 14px 16px; font-size: 12px; color: #888; line-height: 1.8; }
     .info-box strong { color: #0F6E56; }
+    .photo-upload-wrap {
+      cursor: pointer;
+      border: 1.5px dashed #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .photo-upload-wrap:hover { border-color: #0F6E56; }
+    .photo-upload-wrap.has-photo { border-style: solid; border-color: #0F6E56; }
+    .photo-preview {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafaf8;
+    }
+    .photo-placeholder { text-align: center; }
+    .photo-icon { display: block; font-size: 28px; margin-bottom: 8px; }
+    .photo-text { display: block; font-size: 13px; color: #555; font-weight: 500; }
+    .photo-hint { display: block; font-size: 11px; color: #aaa; margin-top: 3px; }
+    .upload-status { font-size: 12px; margin-top: 6px; min-height: 18px; }
+    .upload-status.uploading { color: #888; }
+    .upload-status.done { color: #0F6E56; }
+    .upload-status.error { color: #E24B4A; }
     @media (max-width: 600px) {
       .fg-row { grid-template-columns: 1fr; }
       .form-body { padding: 16px 18px 20px; }
@@ -182,9 +206,21 @@
             <div class="err-msg" id="err-desc">დაწერე აღწერა (მინ. 30 სიმბოლო)</div>
           </div>
           <div class="fg">
-            <label>ფოტოს ბმული</label>
-            <input type="url" id="photo" placeholder="https://...">
-            <div class="hint">Instagram-ის ან სხვა ფოტოს ლინკი (სურვილისამებრ)</div>
+            <label>ფოტო</label>
+            <div class="photo-upload-wrap" id="photoUploadWrap" onclick="document.getElementById('photoFile').click()">
+              <div class="photo-preview" id="photoPreview">
+                <div class="photo-placeholder">
+                  <span class="photo-icon">📷</span>
+                  <span class="photo-text">ფოტოს არჩევა ან გადაღება</span>
+                  <span class="photo-hint">ტელეფონი / კომპიუტერი</span>
+                </div>
+                <img id="photoImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:10px;">
+              </div>
+              <input type="file" id="photoFile" accept="image/*" capture="user" style="display:none" onchange="handlePhoto(this)">
+            </div>
+            <div class="upload-status" id="uploadStatus"></div>
+            <input type="hidden" id="photoUrl">
+            <div class="hint">სურვილისამებრ — თუ არ ატვირთავ, სტანდარტული სურათი გამოჩნდება</div>
           </div>
         </div>
         <div class="step-footer">
@@ -328,6 +364,45 @@
       return ok;
     }
 
+    // ⚠️ ImgBB API key — მიიღე უფასოდ: https://api.imgbb.com
+    const IMGBB_KEY = '9bae22f8073c39773f9ce6190ef54fe2';
+
+    async function handlePhoto(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('photoImg').src = e.target.result;
+        document.getElementById('photoImg').style.display = 'block';
+        document.querySelector('.photo-placeholder').style.display = 'none';
+        document.getElementById('photoUploadWrap').classList.add('has-photo');
+      };
+      reader.readAsDataURL(file);
+      await uploadPhoto(file);
+    }
+
+    async function uploadPhoto(file) {
+      const status = document.getElementById('uploadStatus');
+      status.className = 'upload-status uploading';
+      status.textContent = '⏳ ფოტო იტვირთება...';
+      try {
+        const fd = new FormData();
+        fd.append('image', file);
+        const res = await fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_KEY, { method:'POST', body: fd });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('photoUrl').value = data.data.url;
+          status.className = 'upload-status done';
+          status.textContent = '✓ ფოტო ატვირთულია';
+        } else {
+          throw new Error('upload failed');
+        }
+      } catch(e) {
+        status.className = 'upload-status error';
+        status.textContent = '⚠️ ატვირთვა ვერ მოხერხდა — ფოტო გარეშე გაგრძელდება';
+      }
+    }
+
     async function submitForm() {
       if (!validateStep(3)) return;
       const btn = document.getElementById('submitBtn');
@@ -338,9 +413,13 @@
         price: document.getElementById('price').value,
         format: document.querySelector('input[name="format"]:checked')?.value || '',
         category: document.getElementById('category').value,
-        subcat: document.getElementById('subcat').value,
+        subcat: (function(){
+          const v = document.getElementById('subcat').value;
+          if (v === '__other__') return document.getElementById('customSubcat').value.trim();
+          return v;
+        })(),
         desc: document.getElementById('desc').value.trim(),
-        photo: document.getElementById('photo').value.trim(),
+        photo: document.getElementById('photoUrl').value || '',
         phone: document.getElementById('phone').value.trim(),
         instagram: document.getElementById('instagram').value.trim(),
         facebook: document.getElementById('facebook').value.trim(),
