@@ -1,4 +1,7 @@
 // ===================== CONFIG =====================
+// სტანდარტული ფოტო — თუ მასწავლებელს არ აქვს
+const DEFAULT_PHOTO = '';
+
 const SHEET_ID = '1weL4w0BzXGrYPIczj0kKYFdvE615OIMKSzIpt9Q1Yu0';
 const SHEET_NAME = 'teachers';
 
@@ -44,6 +47,7 @@ async function fetchTeachers() {
       facebook: row.c[8]?.v || '',
       desc:     row.c[9]?.v || '',
       online:   row.c[10]?.v || '',
+      photo:    row.c[11]?.v || '',
     })).filter(t => t.name);
     return teachers;
   } catch(e) {
@@ -78,11 +82,12 @@ function renderCard(t, index) {
     ? `<div class="tc-online">🌐 ონლაინ</div>` : '';
   const price = t.price ? `${t.price}₾/სთ` : 'შეთანხმებით';
   const region = t.region || '—';
+  const photo = t.photo || DEFAULT_PHOTO;
 
   return `
     <div class="teacher-card" onclick="openProfile(${index})">
-      <div class="tc-img ${bg}">
-        <div class="tc-avatar ${av}">${initials}</div>
+      <div class="tc-img ${bg}" style="${photo ? `background-image:url('${photo}');background-size:cover;background-position:center;` : ''}">
+        ${photo ? '' : `<div class="tc-avatar ${av}">${initials}</div>`}
         ${onlineBadge}
       </div>
       <div class="tc-body">
