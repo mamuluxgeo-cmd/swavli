@@ -169,7 +169,10 @@
             </div>
             <div class="fg">
               <label>ქვეკატეგორია</label>
-              <select id="subcat"><option value="">ჯერ აირჩიე კატეგორია</option></select>
+              <select id="subcat" onchange="checkCustomSubcat()"><option value="">ჯერ აირჩიე კატეგორია</option></select>
+              <div id="customSubcatWrap" style="display:none;margin-top:8px;">
+                <input type="text" id="customSubcat" placeholder="მიუთითე შენი სფერო...">
+              </div>
             </div>
           </div>
           <div class="fg">
@@ -243,22 +246,33 @@
       'სასკოლო საგნები':['მათემატიკა','ფიზიკა','ქიმია','ბიოლოგია','ისტორია','გეოგრაფია','ქართული','გამოცდებისთვის მომზადება'],
       'ტექნოლოგია':['პროგრამირება','ვებ დიზაინი','გრაფიკული დიზაინი','ვიდეო მონტაჟი','ფოტოგრაფია','SMM / მარკეტინგი','Excel / Office','3D დიზაინი'],
       'შემოქმედება':['ხატვა / ფერწერა','ჭრა-კერვა','ქარგვა','ქსოვა','კალიგრაფია','კერამიკა','ილუსტრაცია','სკულპტურა'],
-      'ენები':['ინგლისური','რუსული','თურქული','გერმანული','ფრანგული','არაბული','ჩინური','სხვა ენა'],
+      'ენები':['ინგლისური','რუსული','თურქული','გერმანული','ფრანგული','არაბული','ჩინური'],
       'ხელსაქმე':['შედუღება','კრასკვა','ელექტრიკა','სანტექნიკა','ხის დამუშავება','ავეჯის შეკეთება','კარ-ფანჯარა'],
       'სპორტი და ჯანმრთელობა':['ფიტნესი','იოგა','მარშალური ხელოვნება','ცურვა','ჭადრაკი','ფეხბურთი','კალათბურთი','ტენისი'],
       'კულინარია':['საჭმლის მომზადება','ტორტების გაფორმება','ფლორისტიკა','კოუჩინგი','სასაუბრო კლუბი','ეტიკეტი'],
       'თეატრი და მედია':['მჭერმეტყველება','მსახიობობა','პრეზენტაცია','YouTube / Vlog','Reels / TikTok'],
-      'სხვა':['სხვა']
+      'სხვა':[]
     };
 
     function updateSubcat() {
       const cat = document.getElementById('category').value;
       const sub = document.getElementById('subcat');
+      document.getElementById('customSubcatWrap').style.display = 'none';
       sub.innerHTML = '<option value="">აირჩიე ქვეკატეგორია</option>';
       (SUBCATS[cat] || []).forEach(s => {
         const o = document.createElement('option');
         o.value = s; o.textContent = s; sub.appendChild(o);
       });
+      const other = document.createElement('option');
+      other.value = '__other__'; other.textContent = '✏️ სხვა (მიუთითე)';
+      sub.appendChild(other);
+    }
+
+    function checkCustomSubcat() {
+      const val = document.getElementById('subcat').value;
+      const wrap = document.getElementById('customSubcatWrap');
+      wrap.style.display = val === '__other__' ? 'block' : 'none';
+      if (val === '__other__') document.getElementById('customSubcat').focus();
     }
 
     function selectRadio(el) {
