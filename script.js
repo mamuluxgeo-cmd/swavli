@@ -104,10 +104,7 @@ function renderCard(t, index) {
 
 // ===================== OPEN PROFILE =====================
 function openProfile(index) {
-  const t = allTeachers[index];
-  if (!t) return;
-  localStorage.setItem('swavli_teacher', JSON.stringify({...t, _index: index}));
-  window.location.href = 'teacher.html';
+  window.location.href = 'teacher.html?id=' + index;
 }
 
 // ===================== SEARCH / FILTER =====================
@@ -252,11 +249,25 @@ function renderTeachers() {
 }
 
 // ===================== PROFILE PAGE =====================
-function initProfile() {
-  const data = JSON.parse(localStorage.getItem('swavli_teacher') || 'null');
-  if (!data) { window.location.href = 'teachers.html'; return; }
+async function initProfile() {
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id'));
+
+  // Show loading
+  document.getElementById('profName').textContent = 'იტვირთება...';
+  document.getElementById('profName').style.color = 'rgba(255,255,255,0.5)';
+
+  // Load all teachers then pick by index
+  const teachers = await fetchTeachers();
+  const data = teachers[id];
+
+  if (!data) {
+    window.location.href = 'teachers.html';
+    return;
+  }
 
   document.title = data.name + ' — Swavli';
+  document.getElementById('profName').style.color = '';
 
   // Photo
   if (data.photo) {
@@ -265,10 +276,9 @@ function initProfile() {
     img.src = data.photo;
     img.style.display = 'block';
     init.style.display = 'none';
-    // color bg while loading
     const ci = colorIndex(data.name);
-    document.getElementById('profPhotoWrap').style.background = 
-      ['#E1F5EE','#FAEEDA','#FBEAF0','#E6F1FB','#EEEDFE','#EAF3DE'][ci];
+    document.getElementById('profPhotoWrap').style.background =
+      ['#1D6B54','#8B5A0E','#7A2A47','#1A5080','#3D3590','#2E5A12'][ci];
   } else {
     const ci = colorIndex(data.name);
     const bgs = ['#1D9E75','#BA7517','#993556','#185FA5','#534AB7','#3B6D11'];
@@ -322,7 +332,8 @@ function initProfile() {
     row.innerHTML += `<a href="https://instagram.com/${data.instagram.replace('@','')}" target="_blank" class="contact-btn-sec">📸 Instagram</a>`;
   }
   if (data.facebook) {
-    row.innerHTML += `<a href="${data.facebook.startsWith('http') ? data.facebook : 'https://facebook.com/' + data.facebook}" target="_blank" class="contact-btn-sec">📘 Facebook</a>`;
+    const fbUrl = data.facebook.startsWith('http') ? data.facebook : 'https://facebook.com/' + data.facebook;
+    row.innerHTML += `<a href="${fbUrl}" target="_blank" class="contact-btn-sec">📘 Facebook</a>`;
   }
   if (row.children.length) btns.appendChild(row);
   if (!btns.children.length) {
