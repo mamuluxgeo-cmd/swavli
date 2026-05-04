@@ -86,8 +86,8 @@ function renderCard(t, index) {
 
   return `
     <div class="teacher-card" onclick="openProfile(${index})">
-      <div class="tc-img ${bg}" style="${photo ? `background-image:url('${photo}');background-size:cover;background-position:center;` : ''}">
-        ${photo ? '' : `<div class="tc-avatar ${av}">${initials}</div>`}
+      <div class="tc-img ${bg}">
+        ${photo ? `<img src="${photo}" alt="${t.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;">` : `<div class="tc-avatar ${av}">${initials}</div>`}
         ${onlineBadge}
       </div>
       <div class="tc-body">
