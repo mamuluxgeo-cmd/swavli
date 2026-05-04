@@ -257,9 +257,15 @@ function initProfile() {
   if (!data) { window.location.href = 'teachers.html'; return; }
 
   const ci = colorIndex(data.name);
-  document.getElementById('profBg').className = 'profile-card-top ' + BG_COLORS[ci];
+  const profBg = document.getElementById('profBg');
+  profBg.className = 'profile-card-top ' + BG_COLORS[ci];
+  if (data.photo) {
+    profBg.style.backgroundImage = "url('" + data.photo + "')";
+    profBg.style.backgroundSize = 'cover';
+    profBg.style.backgroundPosition = 'center';
+  }
   document.getElementById('profAv').className = 'profile-avatar-lg ' + AV_COLORS[ci];
-  document.getElementById('profAv').textContent = getInitials(data.name);
+  document.getElementById('profAv').textContent = data.photo ? '' : getInitials(data.name);
   document.getElementById('profName').textContent = data.name;
   document.getElementById('profSub').textContent = (data.subcat || data.category) + (data.region ? ' · ' + data.region : '');
   document.title = data.name + ' — Swavli';
@@ -273,7 +279,13 @@ function initProfile() {
   setVal('profPrice', data.price ? data.price + '₾/სთ' : 'შეთანხმებით');
   if (data.instagram) setVal('profInsta', '@' + data.instagram.replace('@',''), '#0F6E56');
   if (data.phone) setVal('profPhone', data.phone);
-  if (data.desc) document.getElementById('profDesc').textContent = data.desc;
+  if (data.desc) {
+    const descEl = document.getElementById('profDesc');
+    descEl.textContent = data.desc;
+    descEl.style.wordBreak = 'break-word';
+    descEl.style.overflowWrap = 'break-word';
+    descEl.style.whiteSpace = 'pre-wrap';
+  }
 
   // Contact button
   document.getElementById('contactBtn').addEventListener('click', () => {
