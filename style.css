@@ -610,7 +610,7 @@ a { text-decoration: none; color: inherit; }
 }
 .info-row:last-child { border-bottom: none; }
 .info-lbl { font-size: 12px; color: #888; flex-shrink: 0; }
-.info-val { font-size: 13px; color: #111; font-weight: 500; text-align: right; }
+.info-val { font-size: 13px; color: #111; font-weight: 500; text-align: right; word-break: break-word; overflow-wrap: break-word; max-width: 180px; }
 .info-val.green { color: #0F6E56; }
 
 .contact-btn {
@@ -646,6 +646,9 @@ a { text-decoration: none; color: inherit; }
   font-size: 14px;
   color: #555;
   line-height: 1.7;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 /* ===================== REGISTER PAGE ===================== */
