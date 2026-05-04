@@ -6,8 +6,147 @@
   <title>მასწავლებლის პროფილი — Swavli</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .prof-page { background: #F4F4F0; min-height: 100vh; padding-bottom: 48px; }
+
+    /* HERO */
+    .prof-hero {
+      background: #0F2D26;
+      padding: 32px 20px 80px;
+      text-align: center;
+      position: relative;
+    }
+    .prof-back {
+      position: absolute; top: 16px; left: 16px;
+      color: rgba(255,255,255,0.7); font-size: 13px;
+      text-decoration: none; display: flex; align-items: center; gap: 6px;
+    }
+    .prof-back:hover { color: #fff; }
+
+    /* PHOTO */
+    .prof-photo-wrap {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      border: 4px solid rgba(255,255,255,0.9);
+      overflow: hidden;
+      background: #1D9E75;
+      position: relative;
+    }
+    .prof-photo-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+    }
+    .prof-initials-big {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; font-weight: 600; color: #fff;
+    }
+    .prof-name {
+      font-size: 22px; font-weight: 600;
+      color: #fff; letter-spacing: -0.3px; margin-bottom: 6px;
+    }
+    .prof-subtitle {
+      font-size: 13px; color: rgba(255,255,255,0.65);
+      margin-bottom: 14px;
+    }
+    .prof-badges {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    }
+    .prof-badge {
+      font-size: 11px; padding: 4px 12px; border-radius: 20px;
+      background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);
+    }
+    .prof-badge.online { background: #1D9E75; color: #fff; }
+
+    /* CARDS */
+    .prof-body {
+      max-width: 520px; margin: -36px auto 0;
+      padding: 0 16px; position: relative; z-index: 10;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .prof-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 0.5px solid #e5e5e0;
+    }
+
+    /* INFO ROWS */
+    .prof-info-list { padding: 4px 0; }
+    .prof-info-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 13px 20px;
+      border-bottom: 0.5px solid #f4f4f0;
+      gap: 12px;
+    }
+    .prof-info-row:last-child { border-bottom: none; }
+    .pir-label {
+      font-size: 12px; color: #aaa;
+      flex-shrink: 0; min-width: 80px;
+    }
+    .pir-val {
+      font-size: 13px; color: #111;
+      font-weight: 500; text-align: right;
+      word-break: break-word;
+    }
+    .pir-val.green { color: #0F6E56; font-size: 15px; font-weight: 600; }
+    .pir-val.link  { color: #0F6E56; }
+
+    /* DESCRIPTION */
+    .prof-desc-card { padding: 20px; }
+    .prof-desc-title {
+      font-size: 11px; font-weight: 600;
+      color: #aaa; letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    .prof-desc-text {
+      font-size: 14px; color: #444;
+      line-height: 1.75;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    /* CONTACT BUTTONS */
+    .prof-contact-card { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .contact-btn-main {
+      width: 100%; background: #0F6E56; color: #fff;
+      border: none; border-radius: 12px; padding: 15px;
+      font-size: 15px; font-weight: 600;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px;
+      transition: background 0.15s; text-decoration: none;
+    }
+    .contact-btn-main:hover { background: #0a5a43; }
+    .contact-btns-row { display: flex; gap: 10px; }
+    .contact-btn-sec {
+      flex: 1; background: #f4f4f0; color: #333;
+      border: none; border-radius: 12px; padding: 13px;
+      font-size: 13px; font-weight: 500;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+      transition: background 0.15s; text-decoration: none;
+    }
+    .contact-btn-sec:hover { background: #e8e8e4; }
+
+    /* DESKTOP */
+    @media (min-width: 700px) {
+      .prof-hero { padding: 48px 24px 100px; }
+      .prof-photo-wrap { width: 130px; height: 130px; }
+      .prof-name { font-size: 26px; }
+      .prof-body { max-width: 700px; flex-direction: row; flex-wrap: wrap; align-items: flex-start; margin-top: -48px; }
+      .prof-card-side { flex: 0 0 260px; }
+      .prof-card-main { flex: 1; min-width: 0; }
+    }
+  </style>
 </head>
-<body data-page="profile">
+<body class="prof-page" data-page="profile">
 
   <nav class="nav">
     <div class="nav-inner">
@@ -22,61 +161,69 @@
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="teachers.html">← მასწავლებლები</a>
-      <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+      <a href="register.html">+ დარეგისტრირება</a>
     </div>
   </nav>
 
-  <div class="profile-wrap">
-    <div class="container">
-      <div class="profile-grid">
+  <!-- HERO -->
+  <div class="prof-hero">
+    <a href="teachers.html" class="prof-back">← უკან</a>
+    <div class="prof-photo-wrap" id="profPhotoWrap">
+      <div class="prof-initials-big" id="profInitials"></div>
+      <img id="profPhoto" src="" alt="" style="display:none;">
+    </div>
+    <div class="prof-name" id="profName"></div>
+    <div class="prof-subtitle" id="profSubtitle"></div>
+    <div class="prof-badges" id="profBadges"></div>
+  </div>
 
-        <!-- SIDEBAR CARD -->
-        <div class="profile-card">
-          <div class="profile-card-top" id="profBg">
-            <div class="profile-avatar-lg" id="profAv"></div>
-          </div>
-          <div class="profile-info">
-            <div class="profile-name" id="profName"></div>
-            <div class="profile-sub" id="profSub"></div>
-            <div class="badges">
-              <span class="badge green" id="onlineBadge" style="display:none;">🌐 ონლაინ</span>
-            </div>
-          </div>
-          <div class="info-rows">
-            <div class="info-row">
-              <span class="info-lbl">კატეგორია</span>
-              <span class="info-val" id="profCat"></span>
-            </div>
-            <div class="info-row">
-              <span class="info-lbl">რეგიონი</span>
-              <span class="info-val" id="profRegion"></span>
-            </div>
-            <div class="info-row">
-              <span class="info-lbl">ფასი</span>
-              <span class="info-val green" id="profPrice"></span>
-            </div>
-            <div class="info-row">
-              <span class="info-lbl">Instagram</span>
-              <span class="info-val green" id="profInsta">—</span>
-            </div>
-            <div class="info-row">
-              <span class="info-lbl">ტელეფონი</span>
-              <span class="info-val" id="profPhone">—</span>
-            </div>
-          </div>
-          <button class="contact-btn" id="contactBtn">📞 დაკავშირება</button>
+  <!-- BODY -->
+  <div class="prof-body">
+
+    <!-- INFO CARD -->
+    <div class="prof-card prof-card-side">
+      <div class="prof-info-list">
+        <div class="prof-info-row">
+          <span class="pir-label">სფერო</span>
+          <span class="pir-val" id="profCat"></span>
         </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="profile-main">
-          <div class="profile-section">
-            <h3>აღწერა</h3>
-            <p id="profDesc">—</p>
-          </div>
+        <div class="prof-info-row">
+          <span class="pir-label">რეგიონი</span>
+          <span class="pir-val" id="profRegion"></span>
         </div>
-
+        <div class="prof-info-row">
+          <span class="pir-label">ფასი</span>
+          <span class="pir-val green" id="profPrice"></span>
+        </div>
+        <div class="prof-info-row" id="instRow" style="display:none">
+          <span class="pir-label">Instagram</span>
+          <span class="pir-val link" id="profInsta"></span>
+        </div>
+        <div class="prof-info-row" id="fbRow" style="display:none">
+          <span class="pir-label">Facebook</span>
+          <span class="pir-val link" id="profFb"></span>
+        </div>
+        <div class="prof-info-row">
+          <span class="pir-label">ტელეფონი</span>
+          <span class="pir-val" id="profPhone"></span>
+        </div>
       </div>
     </div>
+
+    <!-- MAIN: DESC + CONTACT -->
+    <div class="prof-card-main" style="display:flex;flex-direction:column;gap:12px;">
+      <div class="prof-card">
+        <div class="prof-desc-card">
+          <div class="prof-desc-title">ᲐᲦᲬᲔᲠᲐ</div>
+          <div class="prof-desc-text" id="profDesc">—</div>
+        </div>
+      </div>
+
+      <div class="prof-card">
+        <div class="prof-contact-card" id="contactBtns"></div>
+      </div>
+    </div>
+
   </div>
 
   <script src="script.js"></script>
