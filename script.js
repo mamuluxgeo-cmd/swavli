@@ -1,5 +1,4 @@
 // ===================== CONFIG =====================
-// სტანდარტული ფოტო — თუ მასწავლებელს არ აქვს
 const DEFAULT_PHOTO = '';
 
 const SHEET_ID = '1weL4w0BzXGrYPIczj0kKYFdvE615OIMKSzIpt9Q1Yu0';
@@ -27,7 +26,7 @@ let selectedCat = '';
 let selectedReg = '';
 let selectedFmt = '';
 
-// ===================== FETCH DATA =====================
+// ===================== FETCH =====================
 async function fetchTeachers() {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&t=${Date.now()}`;
   try {
@@ -35,23 +34,24 @@ async function fetchTeachers() {
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
-    const teachers = rows.map(row => ({
-      id:       row.c[0]?.v || '',
-      name:     row.c[1]?.v || '',
+
+    return rows.map(row => ({
+      id: row.c[0]?.v || '',
+      name: row.c[1]?.v || '',
       category: row.c[2]?.v || '',
-      subcat:   row.c[3]?.v || '',
-      region:   row.c[4]?.v || '',
-      price:    row.c[5]?.v || '',
-      phone:    row.c[6]?.v || '',
-      instagram:row.c[7]?.v || '',
+      subcat: row.c[3]?.v || '',
+      region: row.c[4]?.v || '',
+      price: row.c[5]?.v || '',
+      phone: row.c[6]?.v || '',
+      instagram: row.c[7]?.v || '',
       facebook: row.c[8]?.v || '',
-      desc:     row.c[9]?.v || '',
-      online:   row.c[10]?.v || '',
-      photo:    row.c[11]?.v || '',
+      desc: row.c[9]?.v || '',
+      online: row.c[10]?.v || '',
+      photo: row.c[11]?.v || '',
     })).filter(t => t.name && t.id !== '001');
-    return teachers;
-  } catch(e) {
-    console.error('Sheets fetch error:', e);
+
+  } catch (e) {
+    console.error(e);
     return [];
   }
 }
@@ -71,35 +71,45 @@ function stripEmoji(str) {
   return str.replace(/^[^\wა-ჰ]+/, '').trim();
 }
 
-// ===================== RENDER TEACHER CARD =====================
+// ===================== CARD =====================
 function renderCard(t, index) {
   const ci = colorIndex(t.name);
   const bg = BG_COLORS[ci];
   const av = AV_COLORS[ci];
   const initials = getInitials(t.name);
-  const stars = '★★★★★';
-  const onlineBadge = (t.online?.toLowerCase() === 'კი' || t.online?.toLowerCase() === 'ონლაინ' || t.online?.toLowerCase() === 'ორივე' || t.region === 'ონლაინ')
-    ? `<div class="tc-online">🌐 ონლაინ</div>` : '';
+
   const price = t.price ? `${t.price}₾/სთ` : 'შეთანხმებით';
   const region = t.region || '—';
   const photo = t.photo || DEFAULT_PHOTO;
 
   return `
     <div class="teacher-card" onclick="openProfile(${index})">
+
       <div class="tc-img ${bg}">
-        ${photo ? `<img src="${photo}" alt="${t.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;">` : `<div class="tc-avatar ${av}">${initials}</div>`}
-        ${onlineBadge}
+        ${
+          photo
+          ? `<img src="${photo}" alt="${t.name}" loading="lazy">`
+          : `<div class="tc-avatar ${av}">${initials}</div>`
+        }
       </div>
+
       <div class="tc-body">
         <div class="tc-name">${t.name}</div>
         <div class="tc-sub">${t.subcat || t.category}</div>
-        <div class="tc-stars"><span class="stars">${stars}</span><span class="star-count">(ახალი)</span></div>
+
         <div class="tc-footer">
           <span class="tc-price">${price}</span>
           <span class="tc-region">${region}</span>
         </div>
       </div>
-    </div>`;
+
+    </div>
+  `;
+}
+
+// ===================== NAV =====================
+function toggleMenu() {
+  document.getElementById('mobileMenu')?.classList.toggle('open');
 }
 
 // ===================== OPEN PROFILE =====================
@@ -107,121 +117,29 @@ function openProfile(index) {
   window.location.href = 'teacher.html?id=' + index;
 }
 
-// ===================== SEARCH / FILTER =====================
+// ===================== FILTER =====================
 function filterTeachers(teachers, cat, reg, fmt) {
   return teachers.filter(t => {
     const matchCat = !cat || t.category.includes(stripEmoji(cat)) || t.subcat.includes(stripEmoji(cat));
     const matchReg = !reg || t.region.includes(stripEmoji(reg));
-    const matchFmt = !fmt || (fmt === 'ონლაინ' ? t.online?.toLowerCase() === 'კი' || t.online?.toLowerCase() === 'ონლაინ' || t.online?.toLowerCase() === 'ორივე' : t.online?.toLowerCase() !== 'კი');
+    const matchFmt = !fmt || (fmt === 'ონლაინ'
+      ? ['კი','ონლაინ','ორივე'].includes(t.online?.toLowerCase())
+      : t.online?.toLowerCase() !== 'კი'
+    );
     return matchCat && matchReg && matchFmt;
   });
 }
 
-function doSearch() {
-  const params = new URLSearchParams();
-  if (selectedCat) params.set('cat', selectedCat);
-  if (selectedReg) params.set('reg', selectedReg);
-  if (selectedFmt) params.set('fmt', selectedFmt);
-  window.location.href = 'teachers.html?' + params.toString();
-}
-
-function goSearch(cat) {
-  window.location.href = 'teachers.html?cat=' + encodeURIComponent(cat);
-}
-
-// ===================== DROPDOWN LOGIC =====================
-function buildDropdown(ddId, items, selId, stateKey) {
-  const dd = document.getElementById(ddId);
-  if (!dd) return;
-  dd.innerHTML = items.map((item, i) =>
-    `<div class="dd-opt${i===0?' active':''}" data-val="${i===0?'':stripEmoji(item)}"
-      onclick="pickOption('${selId}','${ddId}','${stateKey}',this)">${item}</div>`
-  ).join('');
-}
-
-function pickOption(selId, ddId, stateKey, el) {
-  document.getElementById(selId).textContent = el.textContent;
-  document.querySelectorAll('#'+ddId+' .dd-opt').forEach(o => o.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById(ddId).classList.remove('open');
-  if (stateKey === 'cat') selectedCat = el.dataset.val;
-  if (stateKey === 'reg') selectedReg = el.dataset.val;
-  if (stateKey === 'fmt') selectedFmt = el.dataset.val;
-
-  // If on teachers page, re-render
-  if (document.getElementById('teachersList')) renderTeachers();
-  event.stopPropagation();
-}
-
-function toggleMenu() {
-  document.getElementById('mobileMenu')?.classList.toggle('open');
-}
-
-// ===================== INDEX PAGE =====================
-async function initIndex() {
-  buildDropdown('ddCat', CATEGORIES, 'selCat', 'cat');
-  buildDropdown('ddReg', REGIONS, 'selReg', 'reg');
-
-  // Dropdown toggle
-  ['sbCat','sbReg','sbFmt'].forEach(id => {
-    const el = document.getElementById(id);
-    const ddMap = {sbCat:'ddCat', sbReg:'ddReg', sbFmt:'ddFmt'};
-    if (el) el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const dd = document.getElementById(ddMap[id]);
-      const isOpen = dd.classList.contains('open');
-      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
-      if (!isOpen) dd.classList.add('open');
-    });
-  });
-
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
-  });
-
-  allTeachers = await fetchTeachers();
-
-  // Update stat count
-  const sc = document.getElementById('statCount');
-  if (sc) sc.textContent = allTeachers.length + '+';
-
-  // Render last 6 teachers
-  const grid = document.getElementById('featuredTeachers');
-  if (grid) {
-    const featured = allTeachers.slice(-6).reverse();
-    if (featured.length === 0) {
-      grid.innerHTML = '<div class="empty-state">ჯერ მასწავლებლები არ არის დამატებული</div>';
-    } else {
-      grid.innerHTML = featured.map((t, i) => renderCard(t, allTeachers.length - 1 - i)).join('');
-    }
-  }
-}
-
-// ===================== TEACHERS PAGE =====================
-async function initTeachers() {
-  allTeachers = await fetchTeachers();
-
-  // Read URL params
-  const params = new URLSearchParams(window.location.search);
-  selectedCat = params.get('cat') || '';
-  selectedReg = params.get('reg') || '';
-  selectedFmt = params.get('fmt') || '';
-
-  // Build native selects for filters page
-  buildNativeSelect('filterCat', CATEGORIES, selectedCat);
-  buildNativeSelect('filterReg', REGIONS, selectedReg);
-
-  renderTeachers();
-}
-
+// ===================== BUILD SELECT =====================
 function buildNativeSelect(id, items, selected) {
   const el = document.getElementById(id);
   if (!el) return;
+
   el.innerHTML = items.map((item, i) => {
     const val = i === 0 ? '' : stripEmoji(item);
-    const sel = val === selected ? 'selected' : '';
-    return `<option value="${val}" ${sel}>${item}</option>`;
+    return `<option value="${val}" ${val===selected?'selected':''}>${item}</option>`;
   }).join('');
+
   el.addEventListener('change', () => {
     if (id === 'filterCat') selectedCat = el.value;
     if (id === 'filterReg') selectedReg = el.value;
@@ -229,122 +147,42 @@ function buildNativeSelect(id, items, selected) {
   });
 }
 
+// ===================== RENDER =====================
 function renderTeachers() {
   const list = document.getElementById('teachersList');
-  const countEl = document.getElementById('resultsCount');
-  if (!list) return;
+  const count = document.getElementById('resultsCount');
 
   const filtered = filterTeachers(allTeachers, selectedCat, selectedReg, selectedFmt);
-  if (countEl) countEl.textContent = `${filtered.length} მასწავლებელი`;
 
-  if (filtered.length === 0) {
-    list.innerHTML = '<div class="empty-state">ამ ფილტრით მასწავლებელი ვერ მოიძებნა</div>';
+  if (count) count.textContent = `${filtered.length} მასწავლებელი`;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty-state">არ მოიძებნა</div>';
     return;
   }
 
   list.innerHTML = filtered.map((t, i) => {
-    const realIndex = allTeachers.indexOf(t);
-    return renderCard(t, realIndex);
+    const idx = allTeachers.indexOf(t);
+    return renderCard(t, idx);
   }).join('');
 }
 
-// ===================== PROFILE PAGE =====================
-async function initProfile() {
-  const params = new URLSearchParams(window.location.search);
-  const id = parseInt(params.get('id'));
+// ===================== INIT =====================
+async function initTeachers() {
+  allTeachers = await fetchTeachers();
 
-  // Show loading
-  document.getElementById('profName').textContent = 'იტვირთება...';
-  document.getElementById('profName').style.color = 'rgba(255,255,255,0.5)';
+  const params = new URLSearchParams(location.search);
+  selectedCat = params.get('cat') || '';
+  selectedReg = params.get('reg') || '';
 
-  // Load all teachers then pick by index
-  const teachers = await fetchTeachers();
-  const data = teachers[id];
+  buildNativeSelect('filterCat', CATEGORIES, selectedCat);
+  buildNativeSelect('filterReg', REGIONS, selectedReg);
 
-  if (!data) {
-    window.location.href = 'teachers.html';
-    return;
-  }
-
-  document.title = data.name + ' — Swavli';
-  document.getElementById('profName').style.color = '';
-
-  // Photo
-  if (data.photo) {
-    const img = document.getElementById('profPhoto');
-    const init = document.getElementById('profInitials');
-    img.src = data.photo;
-    img.style.display = 'block';
-    init.style.display = 'none';
-    const ci = colorIndex(data.name);
-    document.getElementById('profPhotoWrap').style.background =
-      ['#1D6B54','#8B5A0E','#7A2A47','#1A5080','#3D3590','#2E5A12'][ci];
-  } else {
-    const ci = colorIndex(data.name);
-    const bgs = ['#1D9E75','#BA7517','#993556','#185FA5','#534AB7','#3B6D11'];
-    document.getElementById('profPhotoWrap').style.background = bgs[ci];
-    document.getElementById('profInitials').textContent = getInitials(data.name);
-  }
-
-  // Hero
-  document.getElementById('profName').textContent = data.name;
-  document.getElementById('profSubtitle').textContent =
-    (data.subcat || data.category) + (data.region ? ' · ' + data.region : '');
-
-  // Badges
-  const badges = document.getElementById('profBadges');
-  const fmt = (data.online || '').toLowerCase();
-  if (fmt === 'ონლაინ' || fmt === 'ორივე' || fmt === 'კი') {
-    badges.innerHTML += '<span class="prof-badge online">🌐 ონლაინ</span>';
-  }
-  if (fmt === 'პირადად' || fmt === 'ორივე') {
-    badges.innerHTML += '<span class="prof-badge">🏠 პირადად</span>';
-  }
-
-  // Info rows
-  document.getElementById('profCat').textContent =
-    (data.subcat ? data.subcat + ' / ' : '') + (data.category || '—');
-  document.getElementById('profRegion').textContent = data.region || '—';
-  document.getElementById('profPrice').textContent =
-    data.price ? data.price + '₾/სთ' : 'შეთანხმებით';
-  document.getElementById('profPhone').textContent = data.phone || '—';
-
-  if (data.instagram) {
-    document.getElementById('instRow').style.display = 'flex';
-    document.getElementById('profInsta').textContent = '@' + data.instagram.replace('@','');
-  }
-  if (data.facebook) {
-    document.getElementById('fbRow').style.display = 'flex';
-    document.getElementById('profFb').textContent = data.facebook;
-  }
-
-  // Description
-  if (data.desc) document.getElementById('profDesc').textContent = data.desc;
-
-  // Contact buttons
-  const btns = document.getElementById('contactBtns');
-  if (data.phone) {
-    btns.innerHTML += `<a href="tel:${data.phone}" class="contact-btn-main">📞 დარეკვა — ${data.phone}</a>`;
-  }
-  const row = document.createElement('div');
-  row.className = 'contact-btns-row';
-  if (data.instagram) {
-    row.innerHTML += `<a href="https://instagram.com/${data.instagram.replace('@','')}" target="_blank" class="contact-btn-sec">📸 Instagram</a>`;
-  }
-  if (data.facebook) {
-    const fbUrl = data.facebook.startsWith('http') ? data.facebook : 'https://facebook.com/' + data.facebook;
-    row.innerHTML += `<a href="${fbUrl}" target="_blank" class="contact-btn-sec">📘 Facebook</a>`;
-  }
-  if (row.children.length) btns.appendChild(row);
-  if (!btns.children.length) {
-    btns.innerHTML = '<p style="text-align:center;color:#aaa;font-size:13px;padding:8px 0;">საკონტაქტო ინფო არ მოიძებნა</p>';
-  }
+  renderTeachers();
 }
 
-// ===================== AUTO INIT =====================
+// ===================== AUTO =====================
 document.addEventListener('DOMContentLoaded', () => {
   const page = document.body.dataset.page;
-  if (page === 'index')    initIndex();
   if (page === 'teachers') initTeachers();
-  if (page === 'profile')  initProfile();
 });
