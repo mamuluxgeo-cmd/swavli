@@ -405,6 +405,11 @@
 
     async function submitForm() {
       if (!validateStep(3)) return;
+      const status = document.getElementById('uploadStatus');
+      if (status && status.classList.contains('uploading')) {
+        status.textContent = '⏳ გთხოვთ დაიცადოთ, ფოტო იტვირთება...';
+        return;
+      }
       const btn = document.getElementById('submitBtn');
       btn.disabled = true; btn.textContent = 'იგზავნება...';
       const data = {
