@@ -256,49 +256,77 @@ function initProfile() {
   const data = JSON.parse(localStorage.getItem('swavli_teacher') || 'null');
   if (!data) { window.location.href = 'teachers.html'; return; }
 
-  const ci = colorIndex(data.name);
-  const profBg = document.getElementById('profBg');
-  profBg.className = 'profile-card-top ' + BG_COLORS[ci];
-  if (data.photo) {
-    profBg.style.backgroundImage = "url('" + data.photo + "')";
-    profBg.style.backgroundSize = 'cover';
-    profBg.style.backgroundPosition = 'center';
-  }
-  document.getElementById('profAv').className = 'profile-avatar-lg ' + AV_COLORS[ci];
-  document.getElementById('profAv').textContent = data.photo ? '' : getInitials(data.name);
-  document.getElementById('profName').textContent = data.name;
-  document.getElementById('profSub').textContent = (data.subcat || data.category) + (data.region ? ' · ' + data.region : '');
   document.title = data.name + ' — Swavli';
 
-  if (data.online?.toLowerCase() === 'კი') {
-    document.getElementById('onlineBadge').style.display = 'inline';
+  // Photo
+  if (data.photo) {
+    const img = document.getElementById('profPhoto');
+    const init = document.getElementById('profInitials');
+    img.src = data.photo;
+    img.style.display = 'block';
+    init.style.display = 'none';
+    // color bg while loading
+    const ci = colorIndex(data.name);
+    document.getElementById('profPhotoWrap').style.background = 
+      ['#E1F5EE','#FAEEDA','#FBEAF0','#E6F1FB','#EEEDFE','#EAF3DE'][ci];
+  } else {
+    const ci = colorIndex(data.name);
+    const bgs = ['#1D9E75','#BA7517','#993556','#185FA5','#534AB7','#3B6D11'];
+    document.getElementById('profPhotoWrap').style.background = bgs[ci];
+    document.getElementById('profInitials').textContent = getInitials(data.name);
   }
 
-  setVal('profCat', (data.subcat ? data.subcat + ' / ' : '') + data.category);
-  setVal('profRegion', data.region || '—');
-  setVal('profPrice', data.price ? data.price + '₾/სთ' : 'შეთანხმებით');
-  if (data.instagram) setVal('profInsta', '@' + data.instagram.replace('@',''), '#0F6E56');
-  if (data.phone) setVal('profPhone', data.phone);
-  if (data.desc) {
-    const descEl = document.getElementById('profDesc');
-    descEl.textContent = data.desc;
-    descEl.style.wordBreak = 'break-word';
-    descEl.style.overflowWrap = 'break-word';
-    descEl.style.whiteSpace = 'pre-wrap';
+  // Hero
+  document.getElementById('profName').textContent = data.name;
+  document.getElementById('profSubtitle').textContent =
+    (data.subcat || data.category) + (data.region ? ' · ' + data.region : '');
+
+  // Badges
+  const badges = document.getElementById('profBadges');
+  const fmt = (data.online || '').toLowerCase();
+  if (fmt === 'ონლაინ' || fmt === 'ორივე' || fmt === 'კი') {
+    badges.innerHTML += '<span class="prof-badge online">🌐 ონლაინ</span>';
+  }
+  if (fmt === 'პირადად' || fmt === 'ორივე') {
+    badges.innerHTML += '<span class="prof-badge">🏠 პირადად</span>';
   }
 
-  // Contact button
-  document.getElementById('contactBtn').addEventListener('click', () => {
-    if (data.phone) window.open('tel:' + data.phone);
-    else if (data.instagram) window.open('https://instagram.com/' + data.instagram.replace('@',''), '_blank');
-  });
-}
+  // Info rows
+  document.getElementById('profCat').textContent =
+    (data.subcat ? data.subcat + ' / ' : '') + (data.category || '—');
+  document.getElementById('profRegion').textContent = data.region || '—';
+  document.getElementById('profPrice').textContent =
+    data.price ? data.price + '₾/სთ' : 'შეთანხმებით';
+  document.getElementById('profPhone').textContent = data.phone || '—';
 
-function setVal(id, val, color) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.textContent = val;
-    if (color) el.style.color = color;
+  if (data.instagram) {
+    document.getElementById('instRow').style.display = 'flex';
+    document.getElementById('profInsta').textContent = '@' + data.instagram.replace('@','');
+  }
+  if (data.facebook) {
+    document.getElementById('fbRow').style.display = 'flex';
+    document.getElementById('profFb').textContent = data.facebook;
+  }
+
+  // Description
+  if (data.desc) document.getElementById('profDesc').textContent = data.desc;
+
+  // Contact buttons
+  const btns = document.getElementById('contactBtns');
+  if (data.phone) {
+    btns.innerHTML += `<a href="tel:${data.phone}" class="contact-btn-main">📞 დარეკვა — ${data.phone}</a>`;
+  }
+  const row = document.createElement('div');
+  row.className = 'contact-btns-row';
+  if (data.instagram) {
+    row.innerHTML += `<a href="https://instagram.com/${data.instagram.replace('@','')}" target="_blank" class="contact-btn-sec">📸 Instagram</a>`;
+  }
+  if (data.facebook) {
+    row.innerHTML += `<a href="${data.facebook.startsWith('http') ? data.facebook : 'https://facebook.com/' + data.facebook}" target="_blank" class="contact-btn-sec">📘 Facebook</a>`;
+  }
+  if (row.children.length) btns.appendChild(row);
+  if (!btns.children.length) {
+    btns.innerHTML = '<p style="text-align:center;color:#aaa;font-size:13px;padding:8px 0;">საკონტაქტო ინფო არ მოიძებნა</p>';
   }
 }
 
