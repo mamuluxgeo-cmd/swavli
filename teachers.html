@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>მასწავლებლები — Swavli</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-page="teachers">
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">Swav<span>li</span></a>
+      <div class="nav-links">
+        <a href="teachers.html">მასწავლებლები</a>
+        <a href="index.html#categories">კატეგორიები</a>
+        <a href="index.html#how">როგორ მუშაობს</a>
+        <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="teachers.html">მასწავლებლები</a>
+      <a href="index.html#categories">კატეგორიები</a>
+      <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="container">
+      <h1>მასწავლებლების პოვნა</h1>
+      <div class="filters-bar">
+        <select class="filter-select" id="filterCat"></select>
+        <select class="filter-select" id="filterReg"></select>
+      </div>
+      <div class="results-count" id="resultsCount">იტვირთება...</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="teachers-grid" id="teachersList">
+        <div class="loading-state">მასწავლებლები იტვირთება...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

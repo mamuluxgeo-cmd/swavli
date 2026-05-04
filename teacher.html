@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>მასწავლებლის პროფილი — Swavli</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-page="profile">
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">Swav<span>li</span></a>
+      <div class="nav-links">
+        <a href="teachers.html">← მასწავლებლები</a>
+        <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="teachers.html">← მასწავლებლები</a>
+      <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+    </div>
+  </nav>
+
+  <div class="profile-wrap">
+    <div class="container">
+      <div class="profile-grid">
+
+        <!-- SIDEBAR CARD -->
+        <div class="profile-card">
+          <div class="profile-card-top" id="profBg">
+            <div class="profile-avatar-lg" id="profAv"></div>
+          </div>
+          <div class="profile-info">
+            <div class="profile-name" id="profName"></div>
+            <div class="profile-sub" id="profSub"></div>
+            <div class="badges">
+              <span class="badge green" id="onlineBadge" style="display:none;">🌐 ონლაინ</span>
+            </div>
+          </div>
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-lbl">კატეგორია</span>
+              <span class="info-val" id="profCat"></span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">რეგიონი</span>
+              <span class="info-val" id="profRegion"></span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">ფასი</span>
+              <span class="info-val green" id="profPrice"></span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">Instagram</span>
+              <span class="info-val green" id="profInsta">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">ტელეფონი</span>
+              <span class="info-val" id="profPhone">—</span>
+            </div>
+          </div>
+          <button class="contact-btn" id="contactBtn">📞 დაკავშირება</button>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="profile-main">
+          <div class="profile-section">
+            <h3>აღწერა</h3>
+            <p id="profDesc">—</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

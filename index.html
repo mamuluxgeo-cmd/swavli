@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swavli — იპოვე შენი მასწავლებელი</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">Swav<span>li</span></a>
+      <div class="nav-links">
+        <a href="teachers.html">მასწავლებლები</a>
+        <a href="#categories">კატეგორიები</a>
+        <a href="#how">როგორ მუშაობს</a>
+        <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="teachers.html">მასწავლებლები</a>
+      <a href="#categories">კატეგორიები</a>
+      <a href="#how">როგორ მუშაობს</a>
+      <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-blob"></div>
+    <div class="hero-blob2"></div>
+    <div class="container">
+      <div class="hero-tag"><span class="dot"></span>საქართველოს სასწავლო პლატფორმა</div>
+      <h1 class="hero-title">იპოვე <em>სწორი</em> მასწავლებელი<br>ნებისმიერ სფეროში</h1>
+      <p class="hero-sub">გიტარიდან პროგრამირებამდე, ნეილ არტიდან ქართულ ცეკვამდე —<br>ყველა რეგიონი, ყველა დონე, სრულიად უფასო.</p>
+
+      <!-- SEARCH BAR -->
+      <div class="search-bar">
+        <div class="sb-item" id="sbCat">
+          <div class="sb-label">სფერო</div>
+          <div class="sb-val" id="selCat">ყველა კატეგორია</div>
+          <div class="dropdown" id="ddCat"></div>
+        </div>
+        <div class="sb-divider"></div>
+        <div class="sb-item" id="sbReg">
+          <div class="sb-label">რეგიონი</div>
+          <div class="sb-val" id="selReg">ყველა რეგიონი</div>
+          <div class="dropdown" id="ddReg"></div>
+        </div>
+        <div class="sb-divider"></div>
+        <div class="sb-item" id="sbFmt">
+          <div class="sb-label">ფორმატი</div>
+          <div class="sb-val" id="selFmt">ნებისმიერი</div>
+          <div class="dropdown" id="ddFmt">
+            <div class="dd-opt" data-val="">ნებისმიერი</div>
+            <div class="dd-opt" data-val="პირადად">🏠 პირადად</div>
+            <div class="dd-opt" data-val="ონლაინ">🌐 ონლაინ</div>
+          </div>
+        </div>
+        <button class="sb-btn" onclick="doSearch()">ძიება →</button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-n" id="statCount">—</span><span class="stat-l">მასწავლებელი</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><span class="stat-n">11</span><span class="stat-l">რეგიონი</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><span class="stat-n">60+</span><span class="stat-l">სფერო</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="section" id="categories">
+    <div class="container">
+      <div class="sec-head">
+        <h2 class="sec-title">კატეგორიები</h2>
+        <a href="teachers.html" class="sec-link">ყველა →</a>
+      </div>
+      <div class="cats-grid">
+        <div class="cat-card" onclick="goSearch('მუსიკა')"><div class="cat-icon" style="background:#E1F5EE;">🎵</div><div class="cat-name">მუსიკა</div></div>
+        <div class="cat-card" onclick="goSearch('ცეკვა')"><div class="cat-icon" style="background:#FBEAF0;">💃</div><div class="cat-name">ცეკვა</div></div>
+        <div class="cat-card" onclick="goSearch('სილამაზე')"><div class="cat-icon" style="background:#FAEEDA;">💅</div><div class="cat-name">სილამაზე</div></div>
+        <div class="cat-card" onclick="goSearch('სასკოლო საგნები')"><div class="cat-icon" style="background:#EEEDFE;">🎓</div><div class="cat-name">სასკოლო</div></div>
+        <div class="cat-card" onclick="goSearch('ტექნოლოგია')"><div class="cat-icon" style="background:#E6F1FB;">💻</div><div class="cat-name">ტექნოლოგია</div></div>
+        <div class="cat-card" onclick="goSearch('შემოქმედება')"><div class="cat-icon" style="background:#EAF3DE;">🎨</div><div class="cat-name">შემოქმედება</div></div>
+        <div class="cat-card" onclick="goSearch('ენები')"><div class="cat-icon" style="background:#E1F5EE;">🌍</div><div class="cat-name">ენები</div></div>
+        <div class="cat-card" onclick="goSearch('ხელსაქმე')"><div class="cat-icon" style="background:#FAEEDA;">🔧</div><div class="cat-name">ხელსაქმე</div></div>
+        <div class="cat-card" onclick="goSearch('სპორტი')"><div class="cat-icon" style="background:#FBEAF0;">🏋️</div><div class="cat-name">სპორტი</div></div>
+        <div class="cat-card" onclick="goSearch('კულინარია')"><div class="cat-icon" style="background:#E6F1FB;">🍳</div><div class="cat-name">კულინარია</div></div>
+        <div class="cat-card" onclick="goSearch('თეატრი')"><div class="cat-icon" style="background:#EEEDFE;">🎭</div><div class="cat-name">თეატრი</div></div>
+        <div class="cat-card" onclick="goSearch('')"><div class="cat-icon" style="background:#EAF3DE;">📦</div><div class="cat-name">სხვა</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED TEACHERS -->
+  <section class="section bg-alt">
+    <div class="container">
+      <div class="sec-head">
+        <h2 class="sec-title">ბოლოს დამატებული</h2>
+        <a href="teachers.html" class="sec-link">ყველა →</a>
+      </div>
+      <div class="teachers-grid" id="featuredTeachers">
+        <div class="loading-state">მასწავლებლები იტვირთება...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <div class="container">
+      <h2 class="sec-title" style="text-align:center;margin-bottom:32px;">როგორ მუშაობს?</h2>
+      <div class="steps-row">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h3>მოძებნე</h3>
+          <p>აირჩიე კატეგორია და რეგიონი, მოძებნე შენთვის სასურველი მასწავლებელი</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h3>დაუკავშირდი</h3>
+          <p>პირდაპირ დაუკავშირდი მასწავლებელს ტელეფონით ან სოციალური ქსელით</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h3>დაიწყე სწავლა</h3>
+          <p>შეთანხმდი გრაფიკზე და დაიწყე გაკვეთილები — ონლაინ ან პირადად</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner">
+    <div class="container cta-inner">
+      <div>
+        <h2>ხარ მასწავლებელი?</h2>
+        <p>უფასოდ დაამატე პროფილი და მოიძიე ახალი მოსწავლეები</p>
+      </div>
+      <a href="register.html" class="btn-white">+ პროფილის დამატება</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="logo">Swav<span>li</span></div>
+      <p class="footer-copy">© 2024 Swavli — ყველა უფლება დაცულია</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
