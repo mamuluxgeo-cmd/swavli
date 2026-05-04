@@ -62,7 +62,7 @@
 
     /* CARDS */
     .prof-body {
-      max-width: 520px; margin: -36px auto 0;
+      max-width: 640px; margin: -36px auto 0;
       padding: 0 16px; position: relative; z-index: 10;
       display: flex; flex-direction: column; gap: 12px;
     }
@@ -135,14 +135,24 @@
     }
     .contact-btn-sec:hover { background: #e8e8e4; }
 
+    /* INFO ROW - horizontal */
+    .prof-info-list { padding: 0; }
+    .prof-info-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      align-items: center;
+    }
+    .pir-val { text-align: left; }
+
     /* DESKTOP */
     @media (min-width: 700px) {
-      .prof-hero { padding: 48px 24px 100px; }
+      .prof-hero { padding: 48px 24px 80px; }
       .prof-photo-wrap { width: 130px; height: 130px; }
       .prof-name { font-size: 26px; }
-      .prof-body { max-width: 700px; flex-direction: row; flex-wrap: wrap; align-items: flex-start; margin-top: -48px; }
-      .prof-card-side { flex: 0 0 260px; }
-      .prof-card-main { flex: 1; min-width: 0; }
+      .prof-body { max-width: 640px; }
+      .prof-info-list { display: grid; grid-template-columns: 1fr 1fr; }
+      .prof-info-row { border-right: 0.5px solid #f4f4f0; }
+      .prof-info-row:nth-child(even) { border-right: none; }
     }
   </style>
 </head>
