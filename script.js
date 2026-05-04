@@ -78,7 +78,7 @@ function renderCard(t, index) {
   const av = AV_COLORS[ci];
   const initials = getInitials(t.name);
   const stars = '★★★★★';
-  const onlineBadge = (t.online?.toLowerCase() === 'კი' || t.region === 'ონლაინ')
+  const onlineBadge = (t.online?.toLowerCase() === 'კი' || t.online?.toLowerCase() === 'ონლაინ' || t.online?.toLowerCase() === 'ორივე' || t.region === 'ონლაინ')
     ? `<div class="tc-online">🌐 ონლაინ</div>` : '';
   const price = t.price ? `${t.price}₾/სთ` : 'შეთანხმებით';
   const region = t.region || '—';
@@ -115,7 +115,7 @@ function filterTeachers(teachers, cat, reg, fmt) {
   return teachers.filter(t => {
     const matchCat = !cat || t.category.includes(stripEmoji(cat)) || t.subcat.includes(stripEmoji(cat));
     const matchReg = !reg || t.region.includes(stripEmoji(reg));
-    const matchFmt = !fmt || (fmt === 'ონლაინ' ? t.online?.toLowerCase() === 'კი' : t.online?.toLowerCase() !== 'კი');
+    const matchFmt = !fmt || (fmt === 'ონლაინ' ? t.online?.toLowerCase() === 'კი' || t.online?.toLowerCase() === 'ონლაინ' || t.online?.toLowerCase() === 'ორივე' : t.online?.toLowerCase() !== 'კი');
     return matchCat && matchReg && matchFmt;
   });
 }
