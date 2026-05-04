@@ -29,7 +29,7 @@ let selectedFmt = '';
 
 // ===================== FETCH DATA =====================
 async function fetchTeachers() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&t=${Date.now()}`;
   try {
     const res = await fetch(url);
     const text = await res.text();
@@ -48,7 +48,7 @@ async function fetchTeachers() {
       desc:     row.c[9]?.v || '',
       online:   row.c[10]?.v || '',
       photo:    row.c[11]?.v || '',
-    })).filter(t => t.name);
+    })).filter(t => t.name && t.id !== '001');
     return teachers;
   } catch(e) {
     console.error('Sheets fetch error:', e);
