@@ -2,115 +2,176 @@
 <html lang="ka">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>მასწავლებლები — Moemzade</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    html,body{overflow-x:hidden;}
-    body{background:#F4F4F0;font-family:'Noto Sans Georgian',sans-serif;}
-    .logo-img{height:28px;width:auto;max-width:110px;object-fit:contain;display:block;}
+    body[data-page="teachers"] { background: #F4F4F0; }
+    .logo-img { height: 28px; width: auto; max-width: 110px; object-fit: contain; display: block; }
 
-    /* ── TOP BAR ── */
-    .page-hero{background:#fff;border-bottom:1px solid #ebebE6;padding:12px 0;position:sticky;top:60px;z-index:50;}
-    .ph-inner{max-width:1060px;margin:0 auto;padding:0 20px;display:flex;flex-direction:column;gap:10px;}
+    /* TOP BAR */
+    .page-hero {
+      background: #fff;
+      border-bottom: 1px solid #ebebE6;
+      padding: 14px 0;
+      position: sticky; top: 60px; z-index: 50;
+    }
+    .page-hero .container {
+      max-width: 1060px; margin: 0 auto; padding: 0 20px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .ph-title { font-size: 15px; font-weight: 700; color: #111; white-space: nowrap; }
+    .ph-right { margin-left: auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .results-count { font-size: 12px; color: #999; white-space: nowrap; }
 
-    /* Search */
-    .search-row{display:flex;gap:8px;align-items:center;}
-    .teacher-search-wrap{flex:1;position:relative;}
-    .teacher-search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none;}
-    #teacherSearch{width:100%;padding:9px 14px 9px 36px;border:1px solid #ddd;border-radius:10px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;background:#F8F8F5;outline:none;transition:border-color .15s;}
-    #teacherSearch:focus{border-color:#0F6E56;background:#fff;}
+    /* FILTER TRIGGER PILLS */
+    .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid #ddd; background: #fff;
+      font-size: 12.5px; color: #444;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; transition: 0.15s; white-space: nowrap;
+    }
+    .filter-pill:hover { border-color: #0F6E56; color: #0F6E56; }
+    .filter-pill.active { border-color: #0F6E56; background: #E8F8F3; color: #0F6E56; font-weight: 600; }
+    .filter-pill-arrow { font-size: 10px; opacity: 0.5; }
 
-    /* Filter pills */
-    .filter-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-    .filter-pill{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:999px;border:1px solid #ddd;background:#fff;font-size:12px;color:#444;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;transition:.15s;white-space:nowrap;}
-    .filter-pill:hover{border-color:#0F6E56;color:#0F6E56;}
-    .filter-pill.active{border-color:#0F6E56;background:#E8F8F3;color:#0F6E56;font-weight:600;}
-    .results-count{font-size:12px;color:#999;margin-left:auto;white-space:nowrap;}
+    /* FILTER OVERLAY */
+    .filter-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 200;
+      backdrop-filter: blur(2px);
+    }
+    .filter-overlay.open { display: flex; align-items: flex-end; justify-content: center; }
 
-    /* Price slider */
-    .price-row{display:flex;align-items:center;gap:10px;padding:8px 0 2px;}
-    .price-label-text{font-size:11px;color:#aaa;font-weight:600;letter-spacing:.4px;white-space:nowrap;}
-    .price-sliders{flex:1;display:flex;flex-direction:column;gap:4px;}
-    .price-sliders input[type=range]{width:100%;accent-color:#0F6E56;}
-    #priceLabel{font-size:12px;color:#0F6E56;font-weight:600;white-space:nowrap;min-width:100px;text-align:right;}
+    /* FILTER PANEL */
+    .filter-panel {
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 640px;
+      padding: 24px 24px 40px;
+      animation: slideUp 0.25s ease;
+      max-height: 85vh; overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    .fp-handle {
+      width: 40px; height: 4px; border-radius: 4px;
+      background: #ddd; margin: 0 auto 20px; display: block;
+    }
+    .fp-title { font-size: 17px; font-weight: 700; color: #111; margin-bottom: 20px; }
+    .fp-section { margin-bottom: 24px; }
+    .fp-section-label {
+      font-size: 11px; font-weight: 700; color: #aaa;
+      letter-spacing: 0.6px; margin-bottom: 12px;
+    }
+    .fp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .fp-chip {
+      padding: 8px 16px; border-radius: 999px;
+      border: 1px solid #e0e0e0; background: #fafaf8;
+      font-size: 13px; color: #444;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; transition: 0.15s;
+    }
+    .fp-chip:hover { border-color: #0F6E56; color: #0F6E56; }
+    .fp-chip.sel { border-color: #0F6E56; background: #E8F8F3; color: #0F6E56; font-weight: 600; }
 
-    /* Filter overlay */
-    .filter-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;backdrop-filter:blur(2px);}
-    .filter-overlay.open{display:flex;align-items:flex-end;justify-content:center;}
-    .filter-panel{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:640px;padding:24px 24px 40px;animation:slideUp .25s ease;max-height:85vh;overflow-y:auto;}
-    @keyframes slideUp{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
-    .fp-handle{width:40px;height:4px;border-radius:4px;background:#ddd;margin:0 auto 20px;display:block;}
-    .fp-title{font-size:17px;font-weight:700;color:#111;margin-bottom:20px;}
-    .fp-chips{display:flex;flex-wrap:wrap;gap:8px;}
-    .fp-chip{padding:8px 16px;border-radius:999px;border:1px solid #e0e0e0;background:#fafaf8;font-size:13px;color:#444;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;transition:.15s;}
-    .fp-chip:hover{border-color:#0F6E56;color:#0F6E56;}
-    .fp-chip.sel{border-color:#0F6E56;background:#E8F8F3;color:#0F6E56;font-weight:600;}
-    .fp-footer{display:flex;gap:10px;margin-top:20px;padding-top:20px;border-top:1px solid #f0f0ec;}
-    .fp-clear{flex:1;background:#f4f4f0;color:#555;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
-    .fp-apply{flex:2;background:#0F6E56;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .fp-footer {
+      display: flex; gap: 10px; margin-top: 8px;
+      padding-top: 20px; border-top: 1px solid #f0f0ec;
+    }
+    .fp-clear {
+      flex: 1; background: #f4f4f0; color: #555; border: none;
+      border-radius: 12px; padding: 13px;
+      font-size: 13px; font-weight: 600;
+      font-family: 'Noto Sans Georgian', sans-serif; cursor: pointer;
+    }
+    .fp-apply {
+      flex: 2; background: #0F6E56; color: #fff; border: none;
+      border-radius: 12px; padding: 13px;
+      font-size: 14px; font-weight: 700;
+      font-family: 'Noto Sans Georgian', sans-serif; cursor: pointer;
+    }
+    .fp-apply:hover { background: #0a5a43; }
 
-    /* Grid */
-    .section{padding:20px 0 60px;}
-    .container{max-width:1060px;margin:0 auto;padding:0 20px;}
-    .teachers-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+    /* GRID */
+    .section { padding: 20px 0 60px; }
+    .section .container { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
+    .teachers-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
 
-    /* Card */
-    .teacher-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;}
-    .teacher-card:hover{transform:translateY(-5px);box-shadow:0 14px 32px rgba(0,0,0,.12);}
-    .tc-img{width:100%;aspect-ratio:1/1;position:relative;overflow:hidden;}
-    .tc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;}
-    .tc-avatar{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#fff;}
-    .tc-online-badge{position:absolute;top:8px;right:8px;background:rgba(15,110,86,.9);color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;}
-    .tc-body{padding:11px 13px 13px;}
-    .tc-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .tc-sub{font-size:11px;color:#888;margin:2px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .tc-footer{display:flex;justify-content:space-between;align-items:center;}
-    .tc-price{color:#0F6E56;font-weight:700;font-size:13px;}
-    .tc-region{font-size:10px;color:#aaa;background:#f4f4f0;padding:2px 8px;border-radius:20px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    /* CARD */
+    .teacher-card {
+      background: #fff; border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+      cursor: pointer; transition: 0.2s;
+    }
+    .teacher-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
+    .tc-img { width: 100%; aspect-ratio: 1/1; position: relative; overflow: hidden; }
+    .tc-img img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+    }
+    .tc-avatar {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 700; color: #fff;
+    }
+    .tc-body { padding: 10px 12px 12px; }
+    .tc-name { font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tc-sub  { font-size: 11px; color: #888; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tc-footer { display: flex; justify-content: space-between; align-items: center; }
+    .tc-price { color: #0F6E56; font-weight: 700; font-size: 13px; }
+    .tc-region { font-size: 10px; color: #aaa; background: #f4f4f0; padding: 2px 8px; border-radius: 20px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    /* bg/av */
-    .bg-teal{background:linear-gradient(135deg,#E1F5EE,#9FE1CB)}.bg-amber{background:linear-gradient(135deg,#FAEEDA,#FAC775)}.bg-pink{background:linear-gradient(135deg,#FBEAF0,#F4C0D1)}.bg-blue{background:linear-gradient(135deg,#E6F1FB,#B5D4F4)}.bg-purple{background:linear-gradient(135deg,#EEEDFE,#CECBF6)}.bg-green{background:linear-gradient(135deg,#EAF3DE,#C0DD97)}
-    .av-teal{background:#E1F5EE;color:#0F6E56}.av-amber{background:#FAEEDA;color:#854F0B}.av-pink{background:#FBEAF0;color:#993556}.av-blue{background:#E6F1FB;color:#185FA5}.av-purple{background:#EEEDFE;color:#534AB7}.av-green{background:#EAF3DE;color:#3B6D11}
+    /* PAGINATION */
+    .pagination { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 28px; }
+    .page-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid #ddd; background: #fff;
+      font-size: 13px; font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: 0.15s;
+    }
+    .page-btn:hover { border-color: #0F6E56; color: #0F6E56; }
+    .page-btn.active { background: #0F6E56; color: #fff; border-color: #0F6E56; }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* Scroll reveal */
-    .scroll-reveal{opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease;}
-    .scroll-reveal.revealed{opacity:1;transform:translateY(0);}
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 60px; color: #aaa; font-size: 14px; }
 
-    /* Pagination */
-    .pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:28px;}
-    .page-btn{width:36px;height:36px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
-    .page-btn:hover{border-color:#0F6E56;color:#0F6E56;}
-    .page-btn.active{background:#0F6E56;color:#fff;border-color:#0F6E56;}
-    .page-btn:disabled{opacity:.3;cursor:not-allowed;}
-    .empty-state{grid-column:1/-1;text-align:center;padding:60px;color:#aaa;font-size:14px;}
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .teacher-card { animation: fadeUp 0.3s ease; }
 
-    @media(max-width:960px){.teachers-grid{grid-template-columns:repeat(4,1fr);}}
-    @media(max-width:700px){.teachers-grid{grid-template-columns:repeat(2,1fr);gap:10px;}.price-row{flex-direction:column;align-items:flex-start;}}
+    @media (max-width: 960px) { .teachers-grid { grid-template-columns: repeat(4,1fr); } }
+    @media (max-width: 700px) { .teachers-grid { grid-template-columns: repeat(2,1fr); gap:10px; } }
+    @media (max-width: 400px) { .teachers-grid { grid-template-columns: repeat(2,1fr); } }
   </style>
 </head>
 <body data-page="teachers">
 
   <nav class="nav">
     <div class="nav-inner">
-      <a href="index.html" class="logo"><svg width="160" height="32" viewBox="0 0 160 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0" y="2" width="28" height="28" rx="7" fill="#0F6E56"/>
-  <polygon points="14,6 24,11 14,16 4,11" fill="white" fill-opacity="0.95"/>
-  <rect x="11.5" y="13" width="5" height="7" rx="1" fill="#4ECFA0"/>
-  <path d="M18 13 L18 19 Q18 22 14 22 Q10 22 10 19 L10 13" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <line x1="24" y1="11" x2="24" y2="17" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-  <circle cx="24" cy="18" r="1.3" fill="#4ECFA0"/>
-  <text x="36" y="22" font-family="system-ui,-apple-system,sans-serif" font-size="17" font-weight="700" fill="#111111" letter-spacing="-0.3">moemzade</text>
-  <text x="130" y="22" font-family="system-ui,-apple-system,sans-serif" font-size="17" font-weight="500" fill="#0F6E56">.ge</text>
-</svg></a>
+      <a href="index.html" class="logo">
+        Moemzade<span class="logo-dot">.ge</span>
+      </a>
       <div class="nav-links">
         <a href="teachers.html">მასწავლებლები</a>
         <a href="index.html#categories">კატეგორიები</a>
         <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
       </div>
-      <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+      <button class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="teachers.html">მასწავლებლები</a>
@@ -119,27 +180,26 @@
     </div>
   </nav>
 
+  <!-- TOP BAR -->
   <div class="page-hero">
-    <div class="ph-inner">
-      <div class="search-row">
-        <div class="teacher-search-wrap">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#333" stroke-width="1.5"/><line x1="11" y1="11" x2="15" y2="15" stroke="#333" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <input type="text" id="teacherSearch" placeholder="მასწავლებლის სახელი, სფერო...">
+    <div class="container">
+      <div class="ph-title">მასწავლებლები</div>
+      <div class="ph-right">
+        <div class="filter-pills">
+          <button class="filter-pill" id="pillCat" onclick="openFilter('cat')">
+            <span id="pillCatLabel">ყველა სფერო</span>
+            <span class="filter-pill-arrow">▾</span>
+          </button>
+          <button class="filter-pill" id="pillReg" onclick="openFilter('reg')">
+            <span id="pillRegLabel">ყველა რეგიონი</span>
+            <span class="filter-pill-arrow">▾</span>
+          </button>
+          <button class="filter-pill" id="pillFmt" onclick="openFilter('fmt')">
+            <span id="pillFmtLabel">ნებისმიერი</span>
+            <span class="filter-pill-arrow">▾</span>
+          </button>
         </div>
-      </div>
-      <div class="filter-row">
-        <button class="filter-pill" id="pillCat" onclick="openFilter('cat')"><span id="pillCatLabel">ყველა სფერო</span> ▾</button>
-        <button class="filter-pill" id="pillReg" onclick="openFilter('reg')"><span id="pillRegLabel">ყველა რეგიონი</span> ▾</button>
-        <button class="filter-pill" id="pillFmt" onclick="openFilter('fmt')"><span id="pillFmtLabel">ნებისმიერი</span> ▾</button>
-        <span class="results-count" id="resultsCount"></span>
-      </div>
-      <div class="price-row">
-        <span class="price-label-text">ფასი</span>
-        <div class="price-sliders">
-          <input type="range" id="priceMin" min="0" max="300" value="0" step="5">
-          <input type="range" id="priceMax" min="0" max="300" value="300" step="5">
-        </div>
-        <span id="priceLabel">0₾ — 300₾</span>
+        <div class="results-count" id="resultsCount"></div>
       </div>
     </div>
   </div>
@@ -159,7 +219,9 @@
 
   <div class="section">
     <div class="container">
-      <div class="teachers-grid" id="teachersList"><div class="empty-state">მასწავლებლები იტვირთება...</div></div>
+      <div class="teachers-grid" id="teachersList">
+        <div class="empty-state">მასწავლებლები იტვირთება...</div>
+      </div>
       <div class="pagination" id="pagination"></div>
     </div>
   </div>
