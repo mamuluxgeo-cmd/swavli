@@ -763,66 +763,13 @@ a { text-decoration: none; color: inherit; }
   .hero-title { font-size: 24px; }
 }
 
-/* ===================== LOGO IMG ===================== */
-.logo-img {
-  height: 28px;
-  width: auto;
-  max-width: 120px;
-  display: block;
-  object-fit: contain;
-}
-
-/* ===================== FEATURED GRID (index) ===================== */
-.featured-grid {
-  display: grid !important;
-  grid-template-columns: repeat(5, 1fr) !important;
-  gap: 14px !important;
-}
-
-.featured-grid .teacher-card {
-  border: 0.5px solid #e5e5e0;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06) !important;
-}
-
-.featured-grid .tc-img {
-  height: auto !important;
-  aspect-ratio: 1 / 1;
-  position: relative;
-  overflow: hidden;
-}
-
-.featured-grid .tc-img img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-}
-
-.featured-grid .tc-avatar {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
+/* ── TEXT LOGO ── */
+a.logo {
+  font-size: 17px;
   font-weight: 700;
-  color: #fff;
+  color: #111;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  font-family: 'Noto Sans Georgian', sans-serif;
 }
-
-@media (max-width: 900px) {
-  .featured-grid { grid-template-columns: repeat(3, 1fr) !important; }
-}
-
-@media (max-width: 600px) {
-  .featured-grid { grid-template-columns: repeat(2, 1fr) !important; }
-}
-
-.nav .logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
+.logo-dot { color: #0F6E56; }
