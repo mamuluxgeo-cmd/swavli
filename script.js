@@ -50,7 +50,13 @@ async function fetchTeachers() {
       desc:      row.c[9]?.v || '',
       online:    row.c[10]?.v || '',
       photo:     row.c[11]?.v || '',
-    })).filter(t => t.name && String(t.id) !== '001' && String(t.id) !== '1');
+      approved:  String(row.c[13]?.v || '').toLowerCase(),
+    })).filter(t =>
+      t.name &&
+      String(t.id) !== '001' &&
+      String(t.id) !== '1' &&
+      t.approved === 'კი'
+    );
   } catch(e) { console.error(e); return []; }
 }
 
