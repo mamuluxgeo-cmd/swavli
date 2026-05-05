@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>Admin — Moemzade</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Noto Sans Georgian',sans-serif;background:#F4F4F0;min-height:100vh;}
+
+    /* Login */
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .login-card{background:#fff;border-radius:16px;padding:40px 36px;width:100%;max-width:380px;border:0.5px solid #e5e5e0;}
+    .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+    .login-logo img{height:28px;}
+    .login-title{font-size:18px;font-weight:700;color:#111;margin-bottom:6px;}
+    .login-sub{font-size:13px;color:#888;margin-bottom:24px;}
+    .fg{margin-bottom:16px;}
+    .fg label{display:block;font-size:11px;font-weight:600;color:#666;letter-spacing:.4px;margin-bottom:5px;}
+    .fg input{width:100%;padding:11px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:'Noto Sans Georgian',sans-serif;outline:none;}
+    .fg input:focus{border-color:#0F6E56;}
+    .login-btn{width:100%;background:#0F6E56;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;margin-top:4px;}
+    .err{font-size:12px;color:#E24B4A;margin-top:8px;display:none;}
+
+    /* Admin layout */
+    .admin-wrap{display:none;}
+    .admin-nav{background:#0F2D26;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+    .admin-nav-logo{display:flex;align-items:center;gap:10px;}
+    .admin-nav-logo img{height:24px;}
+    .admin-badge{background:#1D9E75;color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+    .admin-logout{background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+
+    .admin-body{max-width:1060px;margin:0 auto;padding:28px 20px;}
+
+    /* Stats */
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+    .stat-card{background:#fff;border-radius:12px;padding:18px 20px;border:0.5px solid #e5e5e0;}
+    .stat-card .n{font-size:28px;font-weight:700;color:#111;line-height:1;}
+    .stat-card .l{font-size:12px;color:#888;margin-top:4px;}
+    .stat-card .n.green{color:#0F6E56;}
+    .stat-card .n.orange{color:#BA7517;}
+
+    /* Table */
+    .table-card{background:#fff;border-radius:14px;border:0.5px solid #e5e5e0;overflow:hidden;}
+    .table-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #f0f0ec;}
+    .table-head h2{font-size:15px;font-weight:700;color:#111;}
+    .tabs{display:flex;gap:0;background:#f4f4f0;border-radius:8px;padding:3px;}
+    .tab{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;color:#777;border:none;background:none;}
+    .tab.active{background:#fff;color:#111;}
+
+    table{width:100%;border-collapse:collapse;}
+    th{text-align:left;padding:11px 16px;font-size:11px;font-weight:700;color:#aaa;letter-spacing:.5px;background:#fafaf8;border-bottom:0.5px solid #f0f0ec;}
+    td{padding:12px 16px;font-size:13px;color:#333;border-bottom:0.5px solid #f8f8f5;vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#fafaf8;}
+
+    .teacher-mini{display:flex;align-items:center;gap:10px;}
+    .mini-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+    .mini-name{font-weight:600;font-size:13px;color:#111;}
+    .mini-sub{font-size:11px;color:#888;}
+
+    .status-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+    .status-pending{background:#FAEEDA;color:#633806;}
+    .status-approved{background:#E1F5EE;color:#085041;}
+    .status-rejected{background:#FCEBEB;color:#A32D2D;}
+
+    .action-btns{display:flex;gap:6px;}
+    .btn-approve{background:#0F6E56;color:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .btn-reject{background:#f4f4f0;color:#666;border:none;border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .btn-approve:hover{background:#0a5a43;}
+    .btn-reject:hover{background:#FCEBEB;color:#A32D2D;}
+    .btn-view{background:#E6F1FB;color:#185FA5;border:none;border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+
+    .empty-row td{text-align:center;padding:40px;color:#aaa;}
+    .loading-row td{text-align:center;padding:30px;color:#aaa;}
+
+    @media(max-width:700px){
+      .stats-row{grid-template-columns:repeat(2,1fr);}
+      table{display:none;}
+      .mobile-cards{display:flex;flex-direction:column;gap:10px;padding:12px;}
+    }
+    .mobile-cards{display:none;}
+    .m-card{background:#fafaf8;border-radius:10px;padding:14px;}
+    .m-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+    .m-card-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-wrap" id="loginWrap">
+    <div class="login-card">
+      <div class="login-logo"><img src="logo.svg" alt="Moemzade"></div>
+      <div class="login-title">Admin Panel</div>
+      <div class="login-sub">შედი ადმინ პანელში</div>
+      <div class="fg"><label>პაროლი</label><input type="password" id="passInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="login-btn" onclick="doLogin()">შესვლა</button>
+      <div class="err" id="loginErr">პაროლი არასწორია</div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="admin-wrap" id="adminWrap">
+    <nav class="admin-nav">
+      <div class="admin-nav-logo">
+        <img src="logo-white.svg" alt="Moemzade">
+        <span class="admin-badge">Admin</span>
+      </div>
+      <button class="admin-logout" onclick="doLogout()">გასვლა</button>
+    </nav>
+
+    <div class="admin-body">
+      <div class="stats-row">
+        <div class="stat-card"><div class="n" id="sTot">—</div><div class="l">სულ მასწავლებელი</div></div>
+        <div class="stat-card"><div class="n orange" id="sPend">—</div><div class="l">მოლოდინში</div></div>
+        <div class="stat-card"><div class="n green" id="sApp">—</div><div class="l">დამტკიცებული</div></div>
+        <div class="stat-card"><div class="n" id="sCat">—</div><div class="l">სხვადასხვა სფერო</div></div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-head">
+          <h2>მასწავლებლები</h2>
+          <div class="tabs">
+            <button class="tab active" onclick="setTab('all',this)">ყველა</button>
+            <button class="tab" onclick="setTab('pending',this)">მოლოდინი</button>
+            <button class="tab" onclick="setTab('approved',this)">დამტკიცებული</button>
+          </div>
+        </div>
+        <table id="adminTable">
+          <thead><tr>
+            <th>მასწავლებელი</th>
+            <th>სფერო</th>
+            <th>რეგიონი</th>
+            <th>ფასი</th>
+            <th>სტატუსი</th>
+            <th>მოქმედება</th>
+          </tr></thead>
+          <tbody id="adminTbody"><tr class="loading-row"><td colspan="6">მონაცემები იტვირთება...</td></tr></tbody>
+        </table>
+        <div class="mobile-cards" id="mobileCards"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_ID = '1weL4w0BzXGrYPIczj0kKYFdvE615OIMKSzIpt9Q1Yu0';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVMDPiywAB_J7dT5foF_Fja1K4blC_XHRHK9pWuGnZU0neLVp2h3D8lGBXXX9GR4JRJw/exec';
+    // ⚠️ პაროლი — შეცვალე!
+    const ADMIN_PASS = 'moemzade2025';
+
+    const BG_COLS = ['#1D9E75','#BA7517','#993556','#185FA5','#534AB7','#3B6D11'];
+    let allData = [];
+    let currentTab = 'all';
+
+    function colorIdx(n){let h=0;for(let c of n)h=(h*31+c.charCodeAt(0))&0xffffffff;return Math.abs(h)%6;}
+    function initials(n){return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+
+    function doLogin(){
+      const p=document.getElementById('passInput').value;
+      if(p===ADMIN_PASS){
+        document.getElementById('loginWrap').style.display='none';
+        document.getElementById('adminWrap').style.display='block';
+        loadData();
+      } else {
+        document.getElementById('loginErr').style.display='block';
+      }
+    }
+    function doLogout(){
+      document.getElementById('loginWrap').style.display='flex';
+      document.getElementById('adminWrap').style.display='none';
+      document.getElementById('passInput').value='';
+    }
+
+    async function loadData(){
+      const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=teachers&t=${Date.now()}`;
+      try{
+        const res=await fetch(url);
+        const text=await res.text();
+        const json=JSON.parse(text.substring(47).slice(0,-2));
+        allData=json.table.rows.map((row,i)=>({
+          rowNum: i+2,
+          id:       row.c[0]?.v||'',
+          name:     row.c[1]?.v||'',
+          category: row.c[2]?.v||'',
+          subcat:   row.c[3]?.v||'',
+          region:   row.c[4]?.v||'',
+          price:    row.c[5]?.v||'',
+          phone:    row.c[6]?.v||'',
+          date:     row.c[12]?.v||'',
+          approved: String(row.c[13]?.v||'').toLowerCase(),
+        })).filter(t=>t.name && String(t.id)!=='001');
+        updateStats();
+        renderTable();
+      } catch(e){console.error(e);}
+    }
+
+    function updateStats(){
+      const pend=allData.filter(t=>t.approved!=='კი');
+      const appr=allData.filter(t=>t.approved==='კი');
+      const cats=new Set(allData.map(t=>t.category).filter(Boolean));
+      document.getElementById('sTot').textContent=allData.length;
+      document.getElementById('sPend').textContent=pend.length;
+      document.getElementById('sApp').textContent=appr.length;
+      document.getElementById('sCat').textContent=cats.size;
+    }
+
+    function setTab(tab,el){
+      currentTab=tab;
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      el.classList.add('active');
+      renderTable();
+    }
+
+    function renderTable(){
+      let data=allData;
+      if(currentTab==='pending') data=allData.filter(t=>t.approved!=='კი');
+      if(currentTab==='approved') data=allData.filter(t=>t.approved==='კი');
+
+      const tbody=document.getElementById('adminTbody');
+      const mCards=document.getElementById('mobileCards');
+
+      if(!data.length){
+        tbody.innerHTML='<tr class="empty-row"><td colspan="6">ჩანაწერები არ მოიძებნა</td></tr>';
+        mCards.innerHTML='<div style="text-align:center;padding:40px;color:#aaa;font-size:13px;">ჩანაწერები არ მოიძებნა</div>';
+        return;
+      }
+
+      const isApproved=t=>t.approved==='კი';
+      const statusBadge=t=>isApproved(t)
+        ?'<span class="status-badge status-approved">დამტკიცებული</span>'
+        :'<span class="status-badge status-pending">მოლოდინი</span>';
+      const actionBtns=t=>isApproved(t)
+        ?`<div class="action-btns"><button class="btn-reject" onclick="rejectTeacher('${t.rowNum}','${t.name}')">გაუქმება</button><button class="btn-view" onclick="window.open('teacher.html?id=${allData.indexOf(t)}','_blank')">პროფილი</button></div>`
+        :`<div class="action-btns"><button class="btn-approve" onclick="approveTeacher('${t.rowNum}','${t.name}')">✓ დამტკიცება</button><button class="btn-reject" onclick="rejectTeacher('${t.rowNum}','${t.name}')">✕</button></div>`;
+
+      tbody.innerHTML=data.map(t=>`
+        <tr>
+          <td><div class="teacher-mini">
+            <div class="mini-av" style="background:${BG_COLS[colorIdx(t.name)]}">${initials(t.name)}</div>
+            <div><div class="mini-name">${t.name}</div><div class="mini-sub">${t.date||'—'}</div></div>
+          </div></td>
+          <td>${t.subcat||t.category||'—'}</td>
+          <td>${t.region||'—'}</td>
+          <td>${t.price?t.price+'₾':'—'}</td>
+          <td>${statusBadge(t)}</td>
+          <td>${actionBtns(t)}</td>
+        </tr>`).join('');
+
+      mCards.innerHTML=data.map(t=>`
+        <div class="m-card">
+          <div class="m-card-top">
+            <div class="teacher-mini">
+              <div class="mini-av" style="background:${BG_COLS[colorIdx(t.name)]}">${initials(t.name)}</div>
+              <div><div class="mini-name">${t.name}</div><div class="mini-sub">${t.subcat||t.category} · ${t.region}</div></div>
+            </div>
+            ${statusBadge(t)}
+          </div>
+          <div class="m-card-actions">${actionBtns(t)}</div>
+        </div>`).join('');
+    }
+
+    async function approveTeacher(rowNum, name){
+      if(!confirm(`დაამტკიცო "${name}"?`)) return;
+      try{
+        await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'approve',row:parseInt(rowNum)})});
+        await loadData();
+      } catch(e){ alert('შეცდომა — Sheets-ში ხელით შეცვალე'); }
+    }
+
+    async function rejectTeacher(rowNum, name){
+      if(!confirm(`გაუუქმდეს "${name}"?`)) return;
+      try{
+        await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'reject',row:parseInt(rowNum)})});
+        await loadData();
+      } catch(e){ alert('შეცდომა — Sheets-ში ხელით შეცვალე'); }
+    }
+  </script>
+</body>
+</html>
