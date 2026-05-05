@@ -2,157 +2,365 @@
 <html lang="ka">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>მასწავლებლის პროფილი — Moemzade</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>მასწავლებლის პროფილი — Swavli</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { background: #F4F4F0; min-height: 100vh; }
 
-    /* NAV LOGO FIX */
-    .logo-img { height: 28px; width: auto; max-width: 110px; object-fit: contain; display: block; }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body.prof-page {
+      margin: 0;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      background: #F4F4F0;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    .prof-page {
+      background: #F4F4F0;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
 
     /* HERO */
     .prof-hero {
-      background: linear-gradient(160deg, #0F2D26 0%, #1a4a3a 100%);
-      padding: 20px 0 40px;
+      background: linear-gradient(180deg, #0F2D26 0%, #0D271F 100%);
+      padding: 18px 16px 76px;
+      position: relative;
     }
-    .prof-hero-inner {
-      max-width: 860px; margin: 0 auto; padding: 0 24px;
-    }
+
     .prof-back {
-      display: inline-flex; align-items: center; gap: 6px;
-      color: rgba(255,255,255,0.6); font-size: 13px;
-      text-decoration: none; margin-bottom: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.75);
+      font-size: 13px;
+      text-decoration: none;
+      margin-bottom: 18px;
     }
-    .prof-back:hover { color: #fff; }
 
-    .prof-top {
-      display: flex; align-items: center; gap: 24px;
+    .prof-back:hover {
+      color: #fff;
     }
 
-    /* PHOTO — rounded square */
+    .prof-hero-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* PHOTO */
     .prof-photo-wrap {
-      width: 100px; height: 100px; flex-shrink: 0;
-      border-radius: 22px;
-      border: 3px solid rgba(255,255,255,0.85);
+      width: 88px;
+      height: 88px;
+      border-radius: 24px;
+      border: 3px solid rgba(255,255,255,0.9);
       overflow: hidden;
       background: #1D9E75;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-    }
-    .prof-photo-wrap img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-      display: block;
-    }
-    .prof-initials-big {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 30px; font-weight: 700; color: #fff;
+      flex: 0 0 88px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.18);
     }
 
-    .prof-hero-info { flex: 1; min-width: 0; }
+    .prof-photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .prof-initials-big {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .prof-hero-info {
+      min-width: 0;
+      flex: 1;
+    }
+
     .prof-name {
-      font-size: 24px; font-weight: 700; color: #fff;
-      letter-spacing: -0.4px; margin-bottom: 5px;
+      font-size: 21px;
+      line-height: 1.25;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+      word-break: break-word;
     }
-    .prof-subtitle { font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 12px; }
-    .prof-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .prof-subtitle {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.68);
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    .prof-badges {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
     .prof-badge {
-      font-size: 11px; padding: 6px 12px; border-radius: 999px;
-      background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9);
+      font-size: 10.5px;
+      line-height: 1;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.13);
+      color: rgba(255,255,255,0.92);
+      white-space: nowrap;
     }
-    .prof-badge.online { background: #1D9E75; color: #fff; }
+
+    .prof-badge.online {
+      background: #1D9E75;
+      color: #fff;
+    }
 
     /* BODY */
     .prof-body {
-      max-width: 860px; margin: -24px auto 0;
-      padding: 0 24px 60px;
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 16px;
-      align-items: start;
-      position: relative; z-index: 10;
+      max-width: 680px;
+      margin: -48px auto 0;
+      padding: 0 14px;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    /* CARDS */
-    .prof-card {
-      background: #fff;
-      border-radius: 18px;
-      border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 6px 24px rgba(15,45,38,0.07);
+    .prof-card,
+    .prof-card-side {
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(15,45,38,0.08);
+      border-radius: 20px;
       overflow: hidden;
+      box-shadow: 0 10px 28px rgba(15,45,38,0.06);
     }
 
-    /* INFO LIST */
-    .prof-info-list { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+    /* INFO */
+    .prof-info-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      padding: 6px;
+      gap: 6px;
+    }
+
     .prof-info-row {
-      display: flex; flex-direction: column;
-      padding: 10px 12px; border-radius: 12px;
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 12px;
+      border-radius: 14px;
       background: #FAFAF8;
+      min-height: 48px;
     }
-    .pir-label { font-size: 10.5px; color: #aaa; font-weight: 500; margin-bottom: 3px; }
-    .pir-val { font-size: 13.5px; color: #111; font-weight: 600; word-break: break-word; }
-    .pir-val.green { color: #0F6E56; font-size: 15px; }
-    .pir-val.link  { color: #0F6E56; }
 
-    /* RIGHT COLUMN */
-    .prof-right { display: flex; flex-direction: column; gap: 14px; }
-
-    /* DESC */
-    .prof-desc-wrap { padding: 20px 22px; }
-    .prof-desc-label {
-      font-size: 10px; font-weight: 700; color: #bbb;
-      letter-spacing: 0.8px; margin-bottom: 10px;
+    .pir-label {
+      font-size: 11.5px;
+      color: #9C9C95;
+      font-weight: 500;
     }
+
+    .pir-val {
+      font-size: 13px;
+      color: #141414;
+      font-weight: 600;
+      text-align: left;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .pir-val.green {
+      color: #0F6E56;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .pir-val.link {
+      color: #0F6E56;
+    }
+
+    /* DESCRIPTION */
+    .prof-card-main {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .prof-desc-card {
+      padding: 18px;
+    }
+
+    .prof-desc-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #9C9C95;
+      letter-spacing: 0.7px;
+      margin-bottom: 10px;
+    }
+
     .prof-desc-text {
-      font-size: 14px; color: #444; line-height: 1.8;
-      word-break: break-word; white-space: pre-wrap;
+      font-size: 13.5px;
+      color: #3F3F3A;
+      line-height: 1.75;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: pre-wrap;
     }
 
     /* CONTACT */
-    .prof-contact-wrap { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-    .contact-btn-main {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      background: #0F6E56; color: #fff;
-      border: none; border-radius: 13px; padding: 15px;
-      font-size: 14px; font-weight: 700;
-      font-family: 'Noto Sans Georgian', sans-serif;
-      text-decoration: none; cursor: pointer;
-      transition: 0.15s; width: 100%;
+    .prof-contact-card {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    .contact-btn-main:hover { background: #0A5A43; transform: translateY(-1px); }
-    .contact-btns-row { display: flex; gap: 10px; }
-    .contact-btn-sec {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-      background: #F4F4F0; color: #333;
-      border: none; border-radius: 13px; padding: 13px;
-      font-size: 13px; font-weight: 600;
-      font-family: 'Noto Sans Georgian', sans-serif;
-      text-decoration: none; cursor: pointer; transition: 0.15s;
-    }
-    .contact-btn-sec:hover { background: #EAEAE5; }
 
-    /* MOBILE */
-    @media (max-width: 680px) {
-      .prof-top { gap: 14px; }
-      .prof-photo-wrap { width: 78px; height: 78px; border-radius: 18px; }
-      .prof-name { font-size: 19px; }
+    .contact-btn-main {
+      width: 100%;
+      background: #0F6E56;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+
+    .contact-btn-main:hover {
+      background: #0A5A43;
+      transform: translateY(-1px);
+    }
+
+    .contact-btns-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .contact-btn-sec {
+      flex: 1;
+      background: #F4F4F0;
+      color: #30302D;
+      border: none;
+      border-radius: 14px;
+      padding: 13px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+
+    .contact-btn-sec:hover {
+      background: #EAEAE5;
+    }
+
+    /* DESKTOP */
+    @media (min-width: 700px) {
+      .prof-hero {
+        padding: 34px 24px 92px;
+      }
+
+      .prof-hero-inner {
+        gap: 22px;
+      }
+
+      .prof-photo-wrap {
+        width: 118px;
+        height: 118px;
+        flex-basis: 118px;
+        border-radius: 30px;
+      }
+
+      .prof-name {
+        font-size: 28px;
+      }
+
+      .prof-subtitle {
+        font-size: 14px;
+      }
+
       .prof-body {
-        grid-template-columns: 1fr;
-        margin-top: -16px;
+        margin-top: -58px;
+        padding: 0 18px;
+      }
+
+      .prof-info-list {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .prof-info-row {
+        grid-template-columns: 96px 1fr;
+        padding: 14px;
+      }
+    }
+
+    /* SMALL MOBILE */
+    @media (max-width: 380px) {
+      .prof-hero-inner {
+        gap: 12px;
+      }
+
+      .prof-photo-wrap {
+        width: 76px;
+        height: 76px;
+        flex-basis: 76px;
+        border-radius: 20px;
+      }
+
+      .prof-name {
+        font-size: 18px;
+      }
+
+      .prof-subtitle {
+        font-size: 11.5px;
+      }
+
+      .prof-badge {
+        font-size: 10px;
+        padding: 6px 9px;
+      }
+
+      .prof-info-row {
+        grid-template-columns: 82px 1fr;
       }
     }
   </style>
 </head>
-<body data-page="profile">
+
+<body class="prof-page" data-page="profile">
 
   <nav class="nav">
     <div class="nav-inner">
-      <a href="index.html" class="logo">
-        Moemzade<span class="logo-dot">.ge</span>
-      </a>
+      <a href="index.html" class="logo">Swav<span>li</span></a>
       <div class="nav-links">
         <a href="teachers.html">← მასწავლებლები</a>
         <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
@@ -167,47 +375,55 @@
     </div>
   </nav>
 
+  <!-- HERO -->
   <div class="prof-hero">
+    <a href="teachers.html" class="prof-back">← უკან</a>
+
     <div class="prof-hero-inner">
-      <a href="teachers.html" class="prof-back">← უკან</a>
-      <div class="prof-top">
-        <div class="prof-photo-wrap" id="profPhotoWrap">
-          <div class="prof-initials-big" id="profInitials"></div>
-          <img id="profPhoto" src="" alt="" style="display:none;">
-        </div>
-        <div class="prof-hero-info">
-          <div class="prof-name" id="profName">იტვირთება...</div>
-          <div class="prof-subtitle" id="profSubtitle"></div>
-          <div class="prof-badges" id="profBadges"></div>
-        </div>
+      <div class="prof-photo-wrap" id="profPhotoWrap">
+        <div class="prof-initials-big" id="profInitials"></div>
+        <img id="profPhoto" src="" alt="" style="display:none;">
+      </div>
+
+      <div class="prof-hero-info">
+        <div class="prof-name" id="profName"></div>
+        <div class="prof-subtitle" id="profSubtitle"></div>
+        <div class="prof-badges" id="profBadges"></div>
       </div>
     </div>
   </div>
 
+  <!-- BODY -->
   <div class="prof-body">
-    <!-- LEFT: INFO -->
-    <div class="prof-card">
+
+    <!-- INFO CARD -->
+    <div class="prof-card prof-card-side">
       <div class="prof-info-list">
         <div class="prof-info-row">
           <span class="pir-label">სფერო</span>
           <span class="pir-val" id="profCat"></span>
         </div>
+
         <div class="prof-info-row">
           <span class="pir-label">რეგიონი</span>
           <span class="pir-val" id="profRegion"></span>
         </div>
+
         <div class="prof-info-row">
           <span class="pir-label">ფასი</span>
           <span class="pir-val green" id="profPrice"></span>
         </div>
+
         <div class="prof-info-row" id="instRow" style="display:none">
           <span class="pir-label">Instagram</span>
           <span class="pir-val link" id="profInsta"></span>
         </div>
+
         <div class="prof-info-row" id="fbRow" style="display:none">
           <span class="pir-label">Facebook</span>
           <span class="pir-val link" id="profFb"></span>
         </div>
+
         <div class="prof-info-row">
           <span class="pir-label">ტელეფონი</span>
           <span class="pir-val" id="profPhone"></span>
@@ -215,18 +431,20 @@
       </div>
     </div>
 
-    <!-- RIGHT: DESC + CONTACT -->
-    <div class="prof-right">
+    <!-- MAIN: DESC + CONTACT -->
+    <div class="prof-card-main">
       <div class="prof-card">
-        <div class="prof-desc-wrap">
-          <div class="prof-desc-label">ᲐᲦᲬᲔᲠᲐ</div>
+        <div class="prof-desc-card">
+          <div class="prof-desc-title">აღწერა</div>
           <div class="prof-desc-text" id="profDesc">—</div>
         </div>
       </div>
+
       <div class="prof-card">
-        <div class="prof-contact-wrap" id="contactBtns"></div>
+        <div class="prof-contact-card" id="contactBtns"></div>
       </div>
     </div>
+
   </div>
 
   <script src="script.js"></script>
