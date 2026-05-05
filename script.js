@@ -1,303 +1,297 @@
 // ===================== CONFIG =====================
-const DEFAULT_PHOTO = '';
-
-const SHEET_ID = '1weL4w0BzXGrYPIczj0kKYFdvE615OIMKSzIpt9Q1Yu0';
+const SHEET_ID   = '1weL4w0BzXGrYPIczj0kKYFdvE615OIMKSzIpt9Q1Yu0';
 const SHEET_NAME = 'teachers';
+const PAGE_SIZE  = 35;
 
 const CATEGORIES = [
-  'ყველა კატეგორია','🎵 მუსიკა','💃 ცეკვა','💅 სილამაზე',
+  '','🎵 მუსიკა','💃 ცეკვა','💅 სილამაზე',
   '🎓 სასკოლო საგნები','💻 ტექნოლოგია','🎨 შემოქმედება',
   '🌍 ენები','🔧 ხელსაქმე','🏋️ სპორტი','🍳 კულინარია',
   '🎭 თეატრი','📦 სხვა'
 ];
+const CAT_LABELS = ['ყველა სფერო','მუსიკა','ცეკვა','სილამაზე','სასკოლო','ტექნოლოგია','შემოქმედება','ენები','ხელსაქმე','სპორტი','კულინარია','თეატრი','სხვა'];
 
 const REGIONS = [
-  'ყველა რეგიონი','📍 თბილისი','📍 კახეთი','📍 შიდა ქართლი',
-  '📍 ქვემო ქართლი','📍 მცხეთა-მთიანეთი','📍 სამცხე-ჯავახეთი',
-  '📍 იმერეთი','📍 რაჭა-ლეჩხუმი','📍 გურია',
-  '📍 სამეგრელო-ზემო სვანეთი','📍 აჭარა','🌐 ონლაინ'
+  '','თბილისი','კახეთი','შიდა ქართლი','ქვემო ქართლი',
+  'მცხეთა-მთიანეთი','სამცხე-ჯავახეთი','იმერეთი',
+  'რაჭა-ლეჩხუმი','გურია','სამეგრელო-ზემო სვანეთი','აჭარა','აფხაზეთი','ონლაინ'
 ];
+const FORMATS = ['','პირადად','ონლაინ','ორივე'];
+const FMT_LABELS = ['ნებისმიერი','პირადად','ონლაინ','ორივე'];
 
 const BG_COLORS = ['bg-teal','bg-amber','bg-pink','bg-blue','bg-purple','bg-green'];
 const AV_COLORS = ['av-teal','av-amber','av-pink','av-blue','av-purple','av-green'];
 
-let allTeachers = [];
-let selectedCat = '';
-let selectedReg = '';
-let selectedFmt = '';
+let allTeachers  = [];
+let selectedCat  = '';
+let selectedReg  = '';
+let selectedFmt  = '';
+let currentPage  = 1;
+let activeFilter = '';
+let tempVal      = '';
 
 // ===================== FETCH =====================
 async function fetchTeachers() {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&t=${Date.now()}`;
   try {
-    const res = await fetch(url);
+    const res  = await fetch(url);
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
-
-    return rows.map(row => ({
-      id: row.c[0]?.v || '',
-      name: row.c[1]?.v || '',
-      category: row.c[2]?.v || '',
-      subcat: row.c[3]?.v || '',
-      region: row.c[4]?.v || '',
-      price: row.c[5]?.v || '',
-      phone: row.c[6]?.v || '',
+    return json.table.rows.map(row => ({
+      id:        row.c[0]?.v || '',
+      name:      row.c[1]?.v || '',
+      category:  row.c[2]?.v || '',
+      subcat:    row.c[3]?.v || '',
+      region:    row.c[4]?.v || '',
+      price:     row.c[5]?.v || '',
+      phone:     row.c[6]?.v || '',
       instagram: row.c[7]?.v || '',
-      facebook: row.c[8]?.v || '',
-      desc: row.c[9]?.v || '',
-      online: row.c[10]?.v || '',
-      photo: row.c[11]?.v || '',
-    })).filter(t => t.name && t.id !== '001');
-
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+      facebook:  row.c[8]?.v || '',
+      desc:      row.c[9]?.v || '',
+      online:    row.c[10]?.v || '',
+      photo:     row.c[11]?.v || '',
+    })).filter(t => t.name && String(t.id) !== '001' && String(t.id) !== '1');
+  } catch(e) { console.error(e); return []; }
 }
 
 // ===================== UTILS =====================
-function getInitials(name) {
-  return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-}
-
-function colorIndex(name) {
-  let h = 0;
-  for (let c of name) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
-  return Math.abs(h) % BG_COLORS.length;
-}
-
-function stripEmoji(str) {
-  return str.replace(/^[^\wა-ჰ]+/, '').trim();
-}
+function getInitials(n) { return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
+function colorIndex(n)  { let h=0; for(let c of n) h=(h*31+c.charCodeAt(0))&0xffffffff; return Math.abs(h)%6; }
+function stripEmoji(s)  { return s.replace(/^[^\wა-ჰ]+/,'').trim(); }
+function toggleMenu()   { document.getElementById('mobileMenu')?.classList.toggle('open'); }
 
 // ===================== CARD =====================
 function renderCard(t, index) {
-  const ci = colorIndex(t.name);
-  const bg = BG_COLORS[ci];
-  const av = AV_COLORS[ci];
-  const initials = getInitials(t.name);
-
-  const price = t.price ? `${t.price}₾/სთ` : 'შეთანხმებით';
+  const ci  = colorIndex(t.name);
+  const bg  = BG_COLORS[ci];
+  const av  = AV_COLORS[ci];
+  const price  = t.price ? `${t.price}₾/სთ` : 'შეთ.';
   const region = t.region || '—';
-  const photo = t.photo || DEFAULT_PHOTO;
-
+  const imgHtml = t.photo
+    ? `<img src="${t.photo}" alt="${t.name}" loading="lazy">`
+    : `<div class="tc-avatar ${av}">${getInitials(t.name)}</div>`;
   return `
     <div class="teacher-card" onclick="openProfile(${index})">
-
-      <div class="tc-img ${bg}">
-        ${
-          photo
-          ? `<img src="${photo}" alt="${t.name}" loading="lazy">`
-          : `<div class="tc-avatar ${av}">${initials}</div>`
-        }
-      </div>
-
+      <div class="tc-img ${bg}">${imgHtml}</div>
       <div class="tc-body">
         <div class="tc-name">${t.name}</div>
         <div class="tc-sub">${t.subcat || t.category}</div>
-
         <div class="tc-footer">
           <span class="tc-price">${price}</span>
           <span class="tc-region">${region}</span>
         </div>
       </div>
-
-    </div>
-  `;
-}
-
-// ===================== NAV =====================
-function toggleMenu() {
-  document.getElementById('mobileMenu')?.classList.toggle('open');
-}
-
-// ===================== OPEN PROFILE =====================
-function openProfile(index) {
-  window.location.href = 'teacher.html?id=' + index;
+    </div>`;
 }
 
 // ===================== FILTER =====================
-function filterTeachers(teachers, cat, reg, fmt) {
-  return teachers.filter(t => {
-    const matchCat = !cat || t.category.includes(stripEmoji(cat)) || t.subcat.includes(stripEmoji(cat));
-    const matchReg = !reg || t.region.includes(stripEmoji(reg));
-    const matchFmt = !fmt || (fmt === 'ონლაინ'
-      ? ['კი','ონლაინ','ორივე'].includes(t.online?.toLowerCase())
-      : t.online?.toLowerCase() !== 'კი'
-    );
-    return matchCat && matchReg && matchFmt;
+function filterTeachers(arr, cat, reg, fmt) {
+  return arr.filter(t => {
+    const mc = !cat || t.category.includes(stripEmoji(cat)) || t.subcat.includes(stripEmoji(cat));
+    const mr = !reg || t.region.toLowerCase().includes(reg.toLowerCase());
+    const ol = (t.online||'').toLowerCase();
+    const mf = !fmt || (fmt==='ონლაინ' ? ['კი','ონლაინ','ორივე'].includes(ol)
+              : fmt==='პირადად' ? ['პირადად','ორივე',''].includes(ol) || !['კი','ონლაინ'].includes(ol)
+              : fmt==='ორივე'   ? ol==='ორივე' : true);
+    return mc && mr && mf;
   });
 }
 
-// ===================== BUILD SELECT =====================
-function buildNativeSelect(id, items, selected) {
-  const el = document.getElementById(id);
-  if (!el) return;
+// ===================== FILTER PANEL =====================
+function openFilter(type) {
+  activeFilter = type;
+  tempVal = type==='cat' ? selectedCat : type==='reg' ? selectedReg : selectedFmt;
 
-  el.innerHTML = items.map((item, i) => {
-    const val = i === 0 ? '' : stripEmoji(item);
-    return `<option value="${val}" ${val===selected?'selected':''}>${item}</option>`;
-  }).join('');
+  const overlay = document.getElementById('filterOverlay');
+  const title   = document.getElementById('fpTitle');
+  const content = document.getElementById('fpContent');
 
-  el.addEventListener('change', () => {
-    if (id === 'filterCat') selectedCat = el.value;
-    if (id === 'filterReg') selectedReg = el.value;
-    currentPage = 1;
-    renderTeachers();
-  });
+  let items = [], labels = [], current = tempVal;
+
+  if (type === 'cat') {
+    title.textContent = 'სფერო';
+    items  = CATEGORIES;
+    labels = CAT_LABELS;
+  } else if (type === 'reg') {
+    title.textContent = 'რეგიონი';
+    items  = REGIONS;
+    labels = REGIONS.map((r,i) => i===0 ? 'ყველა რეგიონი' : r);
+  } else {
+    title.textContent = 'ფორმატი';
+    items  = FORMATS;
+    labels = FMT_LABELS;
+  }
+
+  content.innerHTML = `<div class="fp-chips">${
+    items.map((val,i) => {
+      const isSel = val === current || (val==='' && current==='');
+      return `<div class="fp-chip${isSel?' sel':''}" onclick="selectChip(this,'${val}')">${labels[i]||val}</div>`;
+    }).join('')
+  }</div>`;
+
+  overlay.classList.add('open');
 }
 
-// ===================== RENDER =====================
+function selectChip(el, val) {
+  document.querySelectorAll('.fp-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  tempVal = val;
+}
+
+function closeFilter() {
+  document.getElementById('filterOverlay').classList.remove('open');
+}
+
+function clearFilter() {
+  tempVal = '';
+  document.querySelectorAll('.fp-chip').forEach(c => c.classList.remove('sel'));
+  const first = document.querySelector('.fp-chip');
+  if (first) first.classList.add('sel');
+}
+
+function applyFilter() {
+  if (activeFilter === 'cat') {
+    selectedCat = tempVal;
+    const idx = CATEGORIES.indexOf(tempVal);
+    document.getElementById('pillCatLabel').textContent = tempVal ? (CAT_LABELS[idx]||stripEmoji(tempVal)) : 'ყველა სფერო';
+    document.getElementById('pillCat').classList.toggle('active', !!tempVal);
+  } else if (activeFilter === 'reg') {
+    selectedReg = tempVal;
+    document.getElementById('pillRegLabel').textContent = tempVal || 'ყველა რეგიონი';
+    document.getElementById('pillReg').classList.toggle('active', !!tempVal);
+  } else {
+    selectedFmt = tempVal;
+    const idx = FORMATS.indexOf(tempVal);
+    document.getElementById('pillFmtLabel').textContent = tempVal ? FMT_LABELS[idx] : 'ნებისმიერი';
+    document.getElementById('pillFmt').classList.toggle('active', !!tempVal);
+  }
+  currentPage = 1;
+  closeFilter();
+  renderTeachers();
+}
+
+// ===================== RENDER TEACHERS =====================
 function renderTeachers() {
-  const list = document.getElementById('teachersList');
+  const list  = document.getElementById('teachersList');
   const count = document.getElementById('resultsCount');
-  const pag = document.getElementById('pagination');
+  const pag   = document.getElementById('pagination');
+  if (!list) return;
 
   const filtered = filterTeachers(allTeachers, selectedCat, selectedReg, selectedFmt);
   if (count) count.textContent = `${filtered.length} მასწავლებელი`;
 
   if (!filtered.length) {
-    list.innerHTML = '<div class="empty-state">არ მოიძებნა</div>';
+    list.innerHTML = '<div class="empty-state">ამ ფილტრით მასწავლებელი ვერ მოიძებნა</div>';
     if (pag) pag.innerHTML = '';
     return;
   }
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  if (currentPage > totalPages) currentPage = 1;
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  if (currentPage > total) currentPage = 1;
+  const items = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
 
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = filtered.slice(start, start + PAGE_SIZE);
+  list.innerHTML = items.map(t => renderCard(t, allTeachers.indexOf(t))).join('');
 
-  list.innerHTML = pageItems.map(t => {
-    const idx = allTeachers.indexOf(t);
-    return renderCard(t, idx);
-  }).join('');
-
-  // Pagination
   if (pag) {
-    if (totalPages <= 1) { pag.innerHTML = ''; return; }
-    let html = `<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>←</button>`;
-    for (let i = 1; i <= totalPages; i++) {
-      html += `<button class="page-btn${i===currentPage?' active':''}" onclick="changePage(${i})">${i}</button>`;
-    }
-    html += `<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>→</button>`;
-    pag.innerHTML = html;
+    if (total <= 1) { pag.innerHTML = ''; return; }
+    let h = `<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>←</button>`;
+    for (let i=1; i<=total; i++)
+      h += `<button class="page-btn${i===currentPage?' active':''}" onclick="changePage(${i})">${i}</button>`;
+    h += `<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage===total?'disabled':''}>→</button>`;
+    pag.innerHTML = h;
   }
 }
 
 function changePage(n) {
   currentPage = n;
   renderTeachers();
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// ===================== INIT =====================
-const PAGE_SIZE = 35;
-let currentPage = 1;
+function openProfile(i) { window.location.href = 'teacher.html?id=' + i; }
 
+// ===================== INIT TEACHERS =====================
 async function initTeachers() {
   allTeachers = await fetchTeachers();
-
-  const params = new URLSearchParams(location.search);
-  selectedCat = params.get('cat') || '';
-  selectedReg = params.get('reg') || '';
-  currentPage = 1;
-
-  buildNativeSelect('filterCat', CATEGORIES, selectedCat);
-  buildNativeSelect('filterReg', REGIONS, selectedReg);
-
+  const p = new URLSearchParams(location.search);
+  selectedCat = p.get('cat') || '';
+  selectedReg = p.get('reg') || '';
+  if (selectedCat) {
+    const idx = CATEGORIES.findIndex(c => stripEmoji(c)===selectedCat);
+    document.getElementById('pillCatLabel').textContent = idx>0 ? CAT_LABELS[idx] : selectedCat;
+    document.getElementById('pillCat').classList.add('active');
+  }
+  if (selectedReg) {
+    document.getElementById('pillRegLabel').textContent = selectedReg;
+    document.getElementById('pillReg').classList.add('active');
+  }
   renderTeachers();
 }
 
-// ===================== AUTO =====================
-document.addEventListener('DOMContentLoaded', () => {
-  const page = document.body.dataset.page;
-  if (page === 'teachers') initTeachers();
-});
-
-// ===================== SEARCH =====================
-function doSearch() {
-  const params = new URLSearchParams();
-  if (selectedCat) params.set('cat', selectedCat);
-  if (selectedReg) params.set('reg', selectedReg);
-  if (selectedFmt) params.set('fmt', selectedFmt);
-  window.location.href = 'teachers.html?' + params.toString();
-}
-
-function goSearch(cat) {
-  window.location.href = 'teachers.html?cat=' + encodeURIComponent(cat);
-}
-
-// ===================== DROPDOWN (index) =====================
+// ===================== INIT INDEX =====================
 function buildDropdown(ddId, items, selId, stateKey) {
   const dd = document.getElementById(ddId);
   if (!dd) return;
-  dd.innerHTML = items.map((item, i) =>
+  dd.innerHTML = items.map((item,i) =>
     `<div class="dd-opt${i===0?' active':''}" data-val="${i===0?'':stripEmoji(item)}"
       onclick="pickOption('${selId}','${ddId}','${stateKey}',this,event)">${item}</div>`
   ).join('');
 }
-
-function pickOption(selId, ddId, stateKey, el, e) {
-  if (e) e.stopPropagation();
+function pickOption(selId,ddId,stateKey,el,e) {
+  if(e) e.stopPropagation();
   document.getElementById(selId).textContent = el.textContent;
-  document.querySelectorAll('#'+ddId+' .dd-opt').forEach(o => o.classList.remove('active'));
+  document.querySelectorAll('#'+ddId+' .dd-opt').forEach(o=>o.classList.remove('active'));
   el.classList.add('active');
   document.getElementById(ddId).classList.remove('open');
-  if (stateKey === 'cat') selectedCat = el.dataset.val;
-  if (stateKey === 'reg') selectedReg = el.dataset.val;
-  if (stateKey === 'fmt') selectedFmt = el.dataset.val;
+  if(stateKey==='cat') selectedCat=el.dataset.val;
+  if(stateKey==='reg') selectedReg=el.dataset.val;
+  if(stateKey==='fmt') selectedFmt=el.dataset.val;
 }
+function doSearch() {
+  const p = new URLSearchParams();
+  if(selectedCat) p.set('cat',selectedCat);
+  if(selectedReg) p.set('reg',selectedReg);
+  if(selectedFmt) p.set('fmt',selectedFmt);
+  window.location.href = 'teachers.html?'+p.toString();
+}
+function goSearch(cat) { window.location.href = 'teachers.html?cat='+encodeURIComponent(cat); }
 
-// ===================== INDEX PAGE =====================
+const INDEX_CATS = ['ყველა კატეგორია','🎵 მუსიკა','💃 ცეკვა','💅 სილამაზე','🎓 სასკოლო საგნები','💻 ტექნოლოგია','🎨 შემოქმედება','🌍 ენები','🔧 ხელსაქმე','🏋️ სპორტი','🍳 კულინარია','🎭 თეატრი','📦 სხვა'];
+const INDEX_REGS = ['ყველა რეგიონი','📍 თბილისი','📍 კახეთი','📍 შიდა ქართლი','📍 ქვემო ქართლი','📍 მცხეთა-მთიანეთი','📍 სამცხე-ჯავახეთი','📍 იმერეთი','📍 რაჭა-ლეჩხუმი','📍 გურია','📍 სამეგრელო-ზემო სვანეთი','📍 აჭარა','📍 აფხაზეთი','🌐 ონლაინ'];
+
 async function initIndex() {
-  buildDropdown('ddCat', CATEGORIES, 'selCat', 'cat');
-  buildDropdown('ddReg', REGIONS, 'selReg', 'reg');
+  buildDropdown('ddCat', INDEX_CATS, 'selCat', 'cat');
+  buildDropdown('ddReg', INDEX_REGS, 'selReg', 'reg');
 
   ['sbCat','sbReg','sbFmt'].forEach(id => {
     const el = document.getElementById(id);
-    const ddMap = {sbCat:'ddCat', sbReg:'ddReg', sbFmt:'ddFmt'};
+    const map = {sbCat:'ddCat',sbReg:'ddReg',sbFmt:'ddFmt'};
     if (!el) return;
-    el.addEventListener('click', (e) => {
+    el.addEventListener('click', e => {
       e.stopPropagation();
-      const dd = document.getElementById(ddMap[id]);
-      const isOpen = dd.classList.contains('open');
-      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
-      if (!isOpen) dd.classList.add('open');
+      const dd = document.getElementById(map[id]);
+      const was = dd.classList.contains('open');
+      document.querySelectorAll('.dropdown').forEach(d=>d.classList.remove('open'));
+      if (!was) dd.classList.add('open');
     });
   });
-
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
-  });
+  document.addEventListener('click', ()=>document.querySelectorAll('.dropdown').forEach(d=>d.classList.remove('open')));
 
   allTeachers = await fetchTeachers();
-
   const sc = document.getElementById('statCount');
   if (sc) sc.textContent = allTeachers.length + '+';
 
   const grid = document.getElementById('featuredTeachers');
   if (!grid) return;
-
   const featured = allTeachers.slice(-5).reverse();
-  if (!featured.length) {
-    grid.innerHTML = '<div class="empty-state">ჯერ მასწავლებლები არ არის დამატებული</div>';
-    return;
-  }
-  grid.innerHTML = featured.map((t, i) => {
-    const realIdx = allTeachers.indexOf(t);
-    return renderCard(t, realIdx);
-  }).join('');
+  grid.innerHTML = featured.length
+    ? featured.map(t => renderCard(t, allTeachers.indexOf(t))).join('')
+    : '<div class="empty-state">ჯერ მასწავლებლები არ არის დამატებული</div>';
 }
 
-// ===================== PROFILE PAGE =====================
+// ===================== INIT PROFILE =====================
 async function initProfile() {
-  const params = new URLSearchParams(window.location.search);
-  const id = parseInt(params.get('id'));
-
-  document.getElementById('profName').textContent = 'იტვირთება...';
-
+  const id = parseInt(new URLSearchParams(location.search).get('id'));
   const teachers = await fetchTeachers();
   const data = teachers[id];
   if (!data) { window.location.href = 'teachers.html'; return; }
@@ -308,57 +302,36 @@ async function initProfile() {
   const wrap = document.getElementById('profPhotoWrap');
   const img  = document.getElementById('profPhoto');
   const init = document.getElementById('profInitials');
-  const ci   = colorIndex(data.name);
   const bgs  = ['#1D9E75','#BA7517','#993556','#185FA5','#534AB7','#3B6D11'];
-
+  wrap.style.background = bgs[colorIndex(data.name)];
   if (data.photo) {
-    wrap.style.background = bgs[ci];
-    img.src = data.photo;
-    img.style.display = 'block';
-    init.style.display = 'none';
+    img.src = data.photo; img.style.display='block'; init.style.display='none';
   } else {
-    wrap.style.background = bgs[ci];
     init.textContent = getInitials(data.name);
   }
 
-  // Hero text
+  // Hero
   document.getElementById('profName').textContent = data.name;
   document.getElementById('profSubtitle').textContent =
-    (data.subcat || data.category) + (data.region ? ' · ' + data.region : '');
+    (data.subcat||data.category) + (data.region ? ' · '+data.region : '');
 
   // Badges
   const badges = document.getElementById('profBadges');
-  const fmt = (data.online || '').toLowerCase();
-  if (['ონლაინ','ორივე','კი'].includes(fmt))
-    badges.innerHTML += '<span class="prof-badge online">🌐 ონლაინ</span>';
-  if (['პირადად','ორივე'].includes(fmt))
-    badges.innerHTML += '<span class="prof-badge">🏠 პირადად</span>';
+  const ol = (data.online||'').toLowerCase();
+  if (['კი','ონლაინ','ორივე'].includes(ol)) badges.innerHTML += '<span class="prof-badge online">🌐 ონლაინ</span>';
+  if (['პირადად','ორივე'].includes(ol))     badges.innerHTML += '<span class="prof-badge">🏠 პირადად</span>';
 
   // Info
-  const setVal = (id, val, cls) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = val;
-    if (cls) el.className = 'pir-val ' + cls;
-  };
-  setVal('profCat',    (data.subcat ? data.subcat + ' / ' : '') + (data.category || '—'));
-  setVal('profRegion', data.region || '—');
-  setVal('profPrice',  data.price ? data.price + '₾/სთ' : 'შეთანხმებით', 'green');
-  setVal('profPhone',  data.phone || '—');
+  const sv = (id,val,cls) => { const el=document.getElementById(id); if(el){el.textContent=val; if(cls)el.className='pir-val '+cls;} };
+  sv('profCat',    (data.subcat?data.subcat+' / ':'')+data.category);
+  sv('profRegion', data.region||'—');
+  sv('profPrice',  data.price ? data.price+'₾/სთ' : 'შეთანხმებით', 'green');
+  sv('profPhone',  data.phone||'—');
+  if (data.instagram) { document.getElementById('instRow').style.display='flex'; sv('profInsta','@'+data.instagram.replace('@',''),'link'); }
+  if (data.facebook)  { document.getElementById('fbRow').style.display='flex';  sv('profFb',data.facebook,'link'); }
 
-  if (data.instagram) {
-    const r = document.getElementById('instRow');
-    if (r) r.style.display = 'grid';
-    setVal('profInsta', '@' + data.instagram.replace('@',''), 'link');
-  }
-  if (data.facebook) {
-    const r = document.getElementById('fbRow');
-    if (r) r.style.display = 'grid';
-    setVal('profFb', data.facebook, 'link');
-  }
-
-  const descEl = document.getElementById('profDesc');
-  if (descEl) descEl.textContent = data.desc || '—';
+  const d = document.getElementById('profDesc');
+  if (d) d.textContent = data.desc || '—';
 
   // Contact
   const btns = document.getElementById('contactBtns');
@@ -370,13 +343,13 @@ async function initProfile() {
   if (data.instagram)
     row.innerHTML += `<a href="https://instagram.com/${data.instagram.replace('@','')}" target="_blank" class="contact-btn-sec">📸 Instagram</a>`;
   if (data.facebook) {
-    const url = data.facebook.startsWith('http') ? data.facebook : 'https://facebook.com/'+data.facebook;
-    row.innerHTML += `<a href="${url}" target="_blank" class="contact-btn-sec">📘 Facebook</a>`;
+    const u = data.facebook.startsWith('http') ? data.facebook : 'https://facebook.com/'+data.facebook;
+    row.innerHTML += `<a href="${u}" target="_blank" class="contact-btn-sec">📘 Facebook</a>`;
   }
   if (row.children.length) btns.appendChild(row);
 }
 
-// ===================== AUTO INIT =====================
+// ===================== AUTO =====================
 document.addEventListener('DOMContentLoaded', () => {
   const page = document.body.dataset.page;
   if (page === 'index')    initIndex();
