@@ -83,12 +83,13 @@
         align-items: stretch;
       }
       .sb-item {
-        flex: 1;
+        flex: 1 1 0;
         border-bottom: none;
         border-right: 0.5px solid #ebebE6;
         min-width: 0;
+        max-width: none;
       }
-      .sb-item:hover { background: #f8f8f5; border-radius: 12px 0 0 12px; }
+      .sb-item:hover { background: #f8f8f5; }
       .sb-val {
         font-size: 13px;
         white-space: nowrap;
@@ -96,14 +97,15 @@
         text-overflow: ellipsis;
       }
       .sb-btn {
-        flex: 0 0 auto;
+        flex: 0 0 110px;
         border-radius: 0 12px 12px 0;
-        padding: 0 28px;
+        padding: 0;
         font-size: 13px;
         display: flex;
         align-items: center;
         justify-content: center;
         white-space: nowrap;
+        width: 110px;
       }
     }
 
@@ -242,30 +244,77 @@
       <h1 class="hero-title">იპოვე <em>სწორი</em> მასწავლებელი<br>ნებისმიერ სფეროში</h1>
       <p class="hero-sub">გიტარიდან პროგრამირებამდე, ნეილ არტიდან ქართულ ცეკვამდე —<br>ყველა რეგიონი, ყველა დონე, სრულიად უფასო.</p>
 
-      <div class="search-bar">
-        <div class="sb-inner">
-          <div class="sb-item" id="sbCat">
-            <div class="sb-label">სფერო</div>
-            <div class="sb-val" id="selCat">ყველა კატეგორია</div>
+      <div style="background:#fff;border:1px solid #d8d8d0;border-radius:14px;max-width:620px;position:relative;z-index:200;">
+        <div id="sbInner" style="display:flex;flex-direction:column;">
+
+          <div id="sbCat" style="padding:13px 16px;cursor:pointer;position:relative;border-bottom:0.5px solid #ebebE6;" onclick="toggleDD('ddCat',event)">
+            <div style="font-size:10px;font-weight:600;color:#aaa;letter-spacing:.5px;margin-bottom:3px;">სფერო</div>
+            <div id="selCat" style="font-size:14px;color:#1a1a1a;">ყველა კატეგორია</div>
             <div class="dropdown" id="ddCat"></div>
           </div>
-          <div class="sb-item" id="sbReg">
-            <div class="sb-label">რეგიონი</div>
-            <div class="sb-val" id="selReg">ყველა რეგიონი</div>
+
+          <div id="sbReg" style="padding:13px 16px;cursor:pointer;position:relative;border-bottom:0.5px solid #ebebE6;" onclick="toggleDD('ddReg',event)">
+            <div style="font-size:10px;font-weight:600;color:#aaa;letter-spacing:.5px;margin-bottom:3px;">რეგიონი</div>
+            <div id="selReg" style="font-size:14px;color:#1a1a1a;">ყველა რეგიონი</div>
             <div class="dropdown" id="ddReg"></div>
           </div>
-          <div class="sb-item" id="sbFmt">
-            <div class="sb-label">ფორმატი</div>
-            <div class="sb-val" id="selFmt">ნებისმიერი</div>
+
+          <div id="sbFmt" style="padding:13px 16px;cursor:pointer;position:relative;" onclick="toggleDD('ddFmt',event)">
+            <div style="font-size:10px;font-weight:600;color:#aaa;letter-spacing:.5px;margin-bottom:3px;">ფორმატი</div>
+            <div id="selFmt" style="font-size:14px;color:#1a1a1a;">ნებისმიერი</div>
             <div class="dropdown" id="ddFmt">
               <div class="dd-opt active" data-val="" onclick="pickOption('selFmt','ddFmt','fmt',this,event)">ნებისმიერი</div>
               <div class="dd-opt" data-val="პირადად" onclick="pickOption('selFmt','ddFmt','fmt',this,event)">🏠 პირადად</div>
               <div class="dd-opt" data-val="ონლაინ"  onclick="pickOption('selFmt','ddFmt','fmt',this,event)">🌐 ონლაინ</div>
             </div>
           </div>
-          <button class="sb-btn" onclick="doSearch()">ძიება →</button>
+
+          <button onclick="doSearch()" style="background:#0F6E56;color:#fff;border:none;border-radius:0 0 12px 12px;padding:14px;font-size:14px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;width:100%;">ძიება →</button>
         </div>
       </div>
+
+      <script>
+        // Make search bar horizontal on desktop
+        function makeSearchResponsive() {
+          const inner = document.getElementById('sbInner');
+          const sbCat = document.getElementById('sbCat');
+          const sbReg = document.getElementById('sbReg');
+          const sbFmt = document.getElementById('sbFmt');
+          const btn   = inner.querySelector('button');
+          if (!inner) return;
+          if (window.innerWidth >= 600) {
+            inner.style.cssText = 'display:flex;flex-direction:row;align-items:stretch;';
+            [sbCat,sbReg,sbFmt].forEach(el => {
+              el.style.cssText = 'padding:13px 16px;cursor:pointer;position:relative;flex:1;min-width:0;border-bottom:none;border-right:0.5px solid #ebebE6;overflow:hidden;';
+            });
+            sbFmt.style.borderRight = 'none';
+            btn.style.cssText = 'background:#0F6E56;color:#fff;border:none;border-radius:0 12px 12px 0;padding:0 28px;font-size:13px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;white-space:nowrap;flex-shrink:0;';
+            inner.querySelector('#selCat').style.fontSize='13px';
+            inner.querySelector('#selReg').style.fontSize='13px';
+            inner.querySelector('#selFmt').style.fontSize='13px';
+          } else {
+            inner.style.cssText = 'display:flex;flex-direction:column;';
+            [sbCat,sbReg,sbFmt].forEach(el => {
+              el.style.cssText = 'padding:13px 16px;cursor:pointer;position:relative;border-bottom:0.5px solid #ebebE6;';
+            });
+            sbFmt.style.borderBottom = 'none';
+            btn.style.cssText = 'background:#0F6E56;color:#fff;border:none;border-radius:0 0 12px 12px;padding:14px;font-size:14px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;width:100%;';
+          }
+        }
+        window.addEventListener('resize', makeSearchResponsive);
+        document.addEventListener('DOMContentLoaded', makeSearchResponsive);
+
+        function toggleDD(ddId, e) {
+          e.stopPropagation();
+          const dd = document.getElementById(ddId);
+          const isOpen = dd.classList.contains('open');
+          document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+          if (!isOpen) dd.classList.add('open');
+        }
+        document.addEventListener('click', () => {
+          document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+        });
+      </script>
 
       <div class="hero-stats">
         <div class="stat"><span class="stat-n" id="statCount">—</span><span class="stat-l">მასწავლებელი</span></div>
