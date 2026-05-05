@@ -310,7 +310,7 @@ async function initProfile() {
   const data = teachers[id];
   if (!data) { window.location.href = 'teachers.html'; return; }
 
-  document.title = data.name + ' — Swavli';
+  document.title = data.name + ' — Moemzade';
 
   // Photo
   const wrap = document.getElementById('profPhotoWrap');
