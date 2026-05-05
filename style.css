@@ -765,9 +765,11 @@ a { text-decoration: none; color: inherit; }
 
 /* ===================== LOGO IMG ===================== */
 .logo-img {
-  height: 32px;
+  height: 28px;
   width: auto;
+  max-width: 120px;
   display: block;
+  object-fit: contain;
 }
 
 /* ===================== FEATURED GRID (index) ===================== */
@@ -817,4 +819,10 @@ a { text-decoration: none; color: inherit; }
 
 @media (max-width: 600px) {
   .featured-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+.nav .logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
