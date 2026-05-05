@@ -263,19 +263,27 @@ async function initIndex() {
   buildDropdown('ddCat', INDEX_CATS, 'selCat', 'cat');
   buildDropdown('ddReg', INDEX_REGS, 'selReg', 'reg');
 
-  ['sbCat','sbReg','sbFmt'].forEach(id => {
+  // Dropdown toggle — click on sb-item opens its dropdown
+  const map = {sbCat:'ddCat', sbReg:'ddReg', sbFmt:'ddFmt'};
+  Object.keys(map).forEach(id => {
     const el = document.getElementById(id);
-    const map = {sbCat:'ddCat',sbReg:'ddReg',sbFmt:'ddFmt'};
     if (!el) return;
     el.addEventListener('click', e => {
       e.stopPropagation();
-      const dd = document.getElementById(map[id]);
-      const was = dd.classList.contains('open');
-      document.querySelectorAll('.dropdown').forEach(d=>d.classList.remove('open'));
-      if (!was) dd.classList.add('open');
+      const ddId = map[id];
+      const dd = document.getElementById(ddId);
+      const isOpen = dd.classList.contains('open');
+      // close all
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+      // open this one if it was closed
+      if (!isOpen) dd.classList.add('open');
     });
   });
-  document.addEventListener('click', ()=>document.querySelectorAll('.dropdown').forEach(d=>d.classList.remove('open')));
+
+  // Close on outside click
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+  });
 
   allTeachers = await fetchTeachers();
   const sc = document.getElementById('statCount');
