@@ -2,282 +2,482 @@
 <html lang="ka">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <title>Admin — Moemzade</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Noto Sans Georgian',sans-serif;background:#F4F4F0;min-height:100vh;}
+    body{font-family:'Noto Sans Georgian',sans-serif;background:#F0F0EC;min-height:100vh;color:#111;}
 
-    /* Login */
+    /* ── LOGIN ── */
     .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-    .login-card{background:#fff;border-radius:16px;padding:40px 36px;width:100%;max-width:380px;border:0.5px solid #e5e5e0;}
-    .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
-    .login-logo img{height:28px;}
-    .login-title{font-size:18px;font-weight:700;color:#111;margin-bottom:6px;}
-    .login-sub{font-size:13px;color:#888;margin-bottom:24px;}
-    .fg{margin-bottom:16px;}
-    .fg label{display:block;font-size:11px;font-weight:600;color:#666;letter-spacing:.4px;margin-bottom:5px;}
-    .fg input{width:100%;padding:11px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:'Noto Sans Georgian',sans-serif;outline:none;}
-    .fg input:focus{border-color:#0F6E56;}
-    .login-btn{width:100%;background:#0F6E56;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;margin-top:4px;}
-    .err{font-size:12px;color:#E24B4A;margin-top:8px;display:none;}
+    .login-card{background:#fff;border-radius:20px;padding:44px 40px;width:100%;max-width:380px;border:0.5px solid #e5e5e0;text-align:center;}
+    .login-logo{height:32px;margin:0 auto 28px;}
+    .login-title{font-size:20px;font-weight:700;color:#111;margin-bottom:6px;}
+    .login-sub{font-size:13px;color:#888;margin-bottom:28px;}
+    .fg input{width:100%;padding:12px 16px;border:1px solid #ddd;border-radius:10px;font-size:14px;font-family:'Noto Sans Georgian',sans-serif;outline:none;text-align:center;letter-spacing:3px;}
+    .fg input:focus{border-color:#0F6E56;box-shadow:0 0 0 3px rgba(15,110,86,.08);}
+    .login-btn{width:100%;background:#0F6E56;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;margin-top:14px;transition:.15s;}
+    .login-btn:hover{background:#0a5a43;}
+    .err{font-size:12px;color:#E24B4A;margin-top:10px;display:none;}
 
-    /* Admin layout */
+    /* ── LAYOUT ── */
     .admin-wrap{display:none;}
-    .admin-nav{background:#0F2D26;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;}
-    .admin-nav-logo{display:flex;align-items:center;gap:10px;}
-    .admin-nav-logo img{height:24px;}
-    .admin-badge{background:#1D9E75;color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
-    .admin-logout{background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .admin-nav{background:#0F2D26;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+    .nav-left{display:flex;align-items:center;gap:12px;}
+    .nav-left img{height:26px;}
+    .admin-badge{background:#1D9E75;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+    .nav-right{display:flex;align-items:center;gap:10px;}
+    .nav-btn{background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;transition:.15s;}
+    .nav-btn:hover{background:rgba(255,255,255,.22);}
+    .nav-btn.green{background:#1D9E75;}
 
-    .admin-body{max-width:1060px;margin:0 auto;padding:28px 20px;}
+    .admin-body{max-width:1100px;margin:0 auto;padding:24px 20px 60px;}
 
-    /* Stats */
-    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
-    .stat-card{background:#fff;border-radius:12px;padding:18px 20px;border:0.5px solid #e5e5e0;}
-    .stat-card .n{font-size:28px;font-weight:700;color:#111;line-height:1;}
-    .stat-card .l{font-size:12px;color:#888;margin-top:4px;}
-    .stat-card .n.green{color:#0F6E56;}
-    .stat-card .n.orange{color:#BA7517;}
+    /* ── STAT CARDS ── */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+    .stat-card{background:#fff;border-radius:14px;padding:18px 20px;border:0.5px solid #e5e5e0;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:14px 0 0 14px;}
+    .stat-card.c1::before{background:#0F6E56;}
+    .stat-card.c2::before{background:#BA7517;}
+    .stat-card.c3::before{background:#1D9E75;}
+    .stat-card.c4::before{background:#534AB7;}
+    .stat-n{font-size:32px;font-weight:700;line-height:1;margin-bottom:6px;}
+    .stat-l{font-size:12px;color:#888;}
+    .stat-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.15;}
 
-    /* Table */
+    /* ── CHARTS ── */
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+    .chart-card{background:#fff;border-radius:14px;padding:20px;border:0.5px solid #e5e5e0;}
+    .chart-title{font-size:13px;font-weight:700;color:#111;margin-bottom:16px;}
+    .chart-wrap{position:relative;height:180px;}
+
+    /* ── TABLE CARD ── */
     .table-card{background:#fff;border-radius:14px;border:0.5px solid #e5e5e0;overflow:hidden;}
-    .table-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #f0f0ec;}
-    .table-head h2{font-size:15px;font-weight:700;color:#111;}
+    .table-toolbar{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid #f0f0ec;flex-wrap:wrap;}
+    .tb-title{font-size:14px;font-weight:700;color:#111;margin-right:4px;}
     .tabs{display:flex;gap:0;background:#f4f4f0;border-radius:8px;padding:3px;}
-    .tab{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;color:#777;border:none;background:none;}
-    .tab.active{background:#fff;color:#111;}
+    .tab{padding:6px 13px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;color:#777;border:none;background:none;transition:.15s;}
+    .tab.active{background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+    .tb-search{flex:1;min-width:160px;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:12px;font-family:'Noto Sans Georgian',sans-serif;outline:none;}
+    .tb-search:focus{border-color:#0F6E56;}
+    .bulk-btn{background:#0F6E56;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;display:none;}
+    .bulk-btn.show{display:block;}
+    .export-btn{background:#f4f4f0;color:#444;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .export-btn:hover{background:#e8e8e4;}
+    .ml-auto{margin-left:auto;}
 
     table{width:100%;border-collapse:collapse;}
-    th{text-align:left;padding:11px 16px;font-size:11px;font-weight:700;color:#aaa;letter-spacing:.5px;background:#fafaf8;border-bottom:0.5px solid #f0f0ec;}
-    td{padding:12px 16px;font-size:13px;color:#333;border-bottom:0.5px solid #f8f8f5;vertical-align:middle;}
+    th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;color:#aaa;letter-spacing:.6px;background:#fafaf8;border-bottom:0.5px solid #f0f0ec;cursor:pointer;user-select:none;white-space:nowrap;}
+    th:hover{color:#111;}
+    th.sorted-asc::after{content:' ↑';}
+    th.sorted-desc::after{content:' ↓';}
+    td{padding:11px 14px;font-size:13px;color:#333;border-bottom:0.5px solid #f8f8f5;vertical-align:middle;}
     tr:last-child td{border-bottom:none;}
     tr:hover td{background:#fafaf8;}
 
+    .check-col{width:36px;}
+    input[type=checkbox]{width:15px;height:15px;accent-color:#0F6E56;cursor:pointer;}
+
     .teacher-mini{display:flex;align-items:center;gap:10px;}
-    .mini-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+    .mini-av{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
     .mini-name{font-weight:600;font-size:13px;color:#111;}
-    .mini-sub{font-size:11px;color:#888;}
+    .mini-sub{font-size:10px;color:#888;}
 
-    .status-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;}
-    .status-pending{background:#FAEEDA;color:#633806;}
-    .status-approved{background:#E1F5EE;color:#085041;}
-    .status-rejected{background:#FCEBEB;color:#A32D2D;}
+    .sb{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+    .sb-p{background:#FAEEDA;color:#633806;}
+    .sb-a{background:#E1F5EE;color:#085041;}
 
-    .action-btns{display:flex;gap:6px;}
-    .btn-approve{background:#0F6E56;color:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
-    .btn-reject{background:#f4f4f0;color:#666;border:none;border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
-    .btn-approve:hover{background:#0a5a43;}
-    .btn-reject:hover{background:#FCEBEB;color:#A32D2D;}
-    .btn-view{background:#E6F1FB;color:#185FA5;border:none;border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .act{display:flex;gap:5px;}
+    .btn-a{background:#0F6E56;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .btn-r{background:#f4f4f0;color:#666;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .btn-v{background:#E6F1FB;color:#185FA5;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .btn-a:hover{background:#0a5a43;}
+    .btn-r:hover{background:#FCEBEB;color:#A32D2D;}
+    .empty-td{text-align:center;padding:48px;color:#aaa;}
 
-    .empty-row td{text-align:center;padding:40px;color:#aaa;}
-    .loading-row td{text-align:center;padding:30px;color:#aaa;}
+    /* ── MODAL ── */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:20px;}
+    .modal-bg.open{display:flex;}
+    .modal{background:#fff;border-radius:20px;width:100%;max-width:500px;overflow:hidden;animation:popIn .2s ease;}
+    @keyframes popIn{from{transform:scale(.94);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .modal-hero{background:#0F2D26;padding:24px;display:flex;align-items:center;gap:16px;}
+    .modal-av{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;border:2.5px solid rgba(255,255,255,.3);}
+    .modal-name{font-size:18px;font-weight:700;color:#fff;}
+    .modal-sub{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;}
+    .modal-body{padding:20px;}
+    .modal-rows{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+    .mrow{background:#f8f8f5;border-radius:10px;padding:10px 13px;}
+    .mrow-l{font-size:10px;color:#aaa;font-weight:600;letter-spacing:.3px;margin-bottom:3px;}
+    .mrow-v{font-size:13px;color:#111;font-weight:600;word-break:break-all;}
+    .mrow-v.green{color:#0F6E56;}
+    .modal-desc{background:#f8f8f5;border-radius:10px;padding:12px 14px;margin-bottom:16px;}
+    .modal-desc-l{font-size:10px;color:#aaa;font-weight:600;letter-spacing:.3px;margin-bottom:6px;}
+    .modal-desc-t{font-size:13px;color:#444;line-height:1.6;white-space:pre-wrap;word-break:break-word;}
+    .modal-footer{display:flex;gap:8px;}
+    .modal-footer button{flex:1;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:700;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;}
+    .mf-close{background:#f4f4f0;color:#555;}
+    .mf-approve{background:#0F6E56;color:#fff;}
+    .mf-approve:hover{background:#0a5a43;}
+    .modal-photo{width:100%;height:160px;object-fit:cover;object-position:center top;border-radius:10px;margin-bottom:14px;}
 
-    @media(max-width:700px){
-      .stats-row{grid-template-columns:repeat(2,1fr);}
-      table{display:none;}
-      .mobile-cards{display:flex;flex-direction:column;gap:10px;padding:12px;}
+    /* ── RESPONSIVE ── */
+    @media(max-width:800px){
+      .stats-grid{grid-template-columns:repeat(2,1fr);}
+      .charts-grid{grid-template-columns:1fr;}
+      .chart-wrap{height:200px;}
     }
-    .mobile-cards{display:none;}
-    .m-card{background:#fafaf8;border-radius:10px;padding:14px;}
-    .m-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-    .m-card-actions{display:flex;gap:6px;flex-wrap:wrap;}
+    @media(max-width:500px){
+      .stats-grid{grid-template-columns:repeat(2,1fr);}
+      .admin-body{padding:16px 14px 60px;}
+    }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN -->
-  <div class="login-wrap" id="loginWrap">
-    <div class="login-card">
-      <div class="login-logo"><img src="logo.svg" alt="Moemzade"></div>
-      <div class="login-title">Admin Panel</div>
-      <div class="login-sub">შედი ადმინ პანელში</div>
-      <div class="fg"><label>პაროლი</label><input type="password" id="passInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="login-btn" onclick="doLogin()">შესვლა</button>
-      <div class="err" id="loginErr">პაროლი არასწორია</div>
-    </div>
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <img src="logo.svg" alt="Moemzade" class="login-logo">
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">შეიყვანე პაროლი</div>
+    <div class="fg"><input type="password" id="passInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="login-btn" onclick="doLogin()">შესვლა →</button>
+    <div class="err" id="loginErr">პაროლი არასწორია ❌</div>
   </div>
+</div>
 
-  <!-- ADMIN -->
-  <div class="admin-wrap" id="adminWrap">
-    <nav class="admin-nav">
-      <div class="admin-nav-logo">
-        <img src="logo-white.svg" alt="Moemzade">
-        <span class="admin-badge">Admin</span>
+<!-- ADMIN -->
+<div class="admin-wrap" id="adminWrap">
+
+  <nav class="admin-nav">
+    <div class="nav-left">
+      <img src="logo-white.svg" alt="Moemzade">
+      <span class="admin-badge">Admin</span>
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn green" onclick="loadData()">↻ განახლება</button>
+      <button class="nav-btn" onclick="window.open('index.html','_blank')">საიტი ↗</button>
+      <button class="nav-btn" onclick="doLogout()">გასვლა</button>
+    </div>
+  </nav>
+
+  <div class="admin-body">
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card c1"><div class="stat-n" id="sTot">—</div><div class="stat-l">სულ მასწავლებელი</div><div class="stat-icon">👨‍🏫</div></div>
+      <div class="stat-card c2"><div class="stat-n" id="sPend" style="color:#BA7517;">—</div><div class="stat-l">მოლოდინში</div><div class="stat-icon">⏳</div></div>
+      <div class="stat-card c3"><div class="stat-n" id="sApp" style="color:#0F6E56;">—</div><div class="stat-l">დამტკიცებული</div><div class="stat-icon">✅</div></div>
+      <div class="stat-card c4"><div class="stat-n" id="sCat" style="color:#534AB7;">—</div><div class="stat-l">სხვადასხვა სფერო</div><div class="stat-icon">🎯</div></div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">სფეროები</div>
+        <div class="chart-wrap"><canvas id="catChart"></canvas></div>
       </div>
-      <button class="admin-logout" onclick="doLogout()">გასვლა</button>
-    </nav>
-
-    <div class="admin-body">
-      <div class="stats-row">
-        <div class="stat-card"><div class="n" id="sTot">—</div><div class="l">სულ მასწავლებელი</div></div>
-        <div class="stat-card"><div class="n orange" id="sPend">—</div><div class="l">მოლოდინში</div></div>
-        <div class="stat-card"><div class="n green" id="sApp">—</div><div class="l">დამტკიცებული</div></div>
-        <div class="stat-card"><div class="n" id="sCat">—</div><div class="l">სხვადასხვა სფერო</div></div>
+      <div class="chart-card">
+        <div class="chart-title">რეგიონები</div>
+        <div class="chart-wrap"><canvas id="regChart"></canvas></div>
       </div>
+      <div class="chart-card">
+        <div class="chart-title">რეგისტრაციები (ბოლო 7 დღე)</div>
+        <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
+      </div>
+    </div>
 
-      <div class="table-card">
-        <div class="table-head">
-          <h2>მასწავლებლები</h2>
-          <div class="tabs">
-            <button class="tab active" onclick="setTab('all',this)">ყველა</button>
-            <button class="tab" onclick="setTab('pending',this)">მოლოდინი</button>
-            <button class="tab" onclick="setTab('approved',this)">დამტკიცებული</button>
-          </div>
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-toolbar">
+        <span class="tb-title">მასწავლებლები</span>
+        <div class="tabs">
+          <button class="tab active" onclick="setTab('all',this)">ყველა</button>
+          <button class="tab" onclick="setTab('pending',this)">მოლოდინი</button>
+          <button class="tab" onclick="setTab('approved',this)">დამტკიცებული</button>
         </div>
-        <table id="adminTable">
+        <input type="text" class="tb-search" id="tableSearch" placeholder="ძიება..." oninput="renderTable()">
+        <button class="bulk-btn" id="bulkBtn" onclick="bulkApprove()">✓ დამტკიცება (<span id="bulkCount">0</span>)</button>
+        <button class="export-btn ml-auto" onclick="exportCSV()">⬇ CSV</button>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table>
           <thead><tr>
-            <th>მასწავლებელი</th>
-            <th>სფერო</th>
-            <th>რეგიონი</th>
-            <th>ფასი</th>
+            <th class="check-col"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"></th>
+            <th onclick="sortBy('name')">მასწავლებელი</th>
+            <th onclick="sortBy('category')">სფერო</th>
+            <th onclick="sortBy('region')">რეგიონი</th>
+            <th onclick="sortBy('price')">ფასი</th>
+            <th onclick="sortBy('date')">თარიღი</th>
             <th>სტატუსი</th>
             <th>მოქმედება</th>
           </tr></thead>
-          <tbody id="adminTbody"><tr class="loading-row"><td colspan="6">მონაცემები იტვირთება...</td></tr></tbody>
+          <tbody id="adminTbody"></tbody>
         </table>
-        <div class="mobile-cards" id="mobileCards"></div>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    const SHEET_ID = '1weL4w0BzXGrYPIczj0kKYFdvE615OIMKSzIpt9Q1Yu0';
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVMDPiywAB_J7dT5foF_Fja1K4blC_XHRHK9pWuGnZU0neLVp2h3D8lGBXXX9GR4JRJw/exec';
-    // ⚠️ პაროლი — შეცვალე!
-    const ADMIN_PASS = 'moemzade2025';
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hero">
+      <div class="modal-av" id="mAv"></div>
+      <div><div class="modal-name" id="mName"></div><div class="modal-sub" id="mSub"></div></div>
+    </div>
+    <div class="modal-body">
+      <img id="mPhoto" class="modal-photo" src="" alt="" style="display:none;">
+      <div class="modal-rows">
+        <div class="mrow"><div class="mrow-l">სფერო</div><div class="mrow-v" id="mCat"></div></div>
+        <div class="mrow"><div class="mrow-l">რეგიონი</div><div class="mrow-v" id="mReg"></div></div>
+        <div class="mrow"><div class="mrow-l">ფასი</div><div class="mrow-v green" id="mPrice"></div></div>
+        <div class="mrow"><div class="mrow-l">ტელეფონი</div><div class="mrow-v" id="mPhone"></div></div>
+        <div class="mrow"><div class="mrow-l">Instagram</div><div class="mrow-v" id="mInsta"></div></div>
+        <div class="mrow"><div class="mrow-l">ფორმატი</div><div class="mrow-v" id="mOnline"></div></div>
+      </div>
+      <div class="modal-desc"><div class="modal-desc-l">აღწერა</div><div class="modal-desc-t" id="mDesc"></div></div>
+      <div class="modal-footer">
+        <button class="mf-close" onclick="closeModal()">დახურვა</button>
+        <button class="mf-approve" id="mApproveBtn">✓ დამტკიცება</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-    const BG_COLS = ['#1D9E75','#BA7517','#993556','#185FA5','#534AB7','#3B6D11'];
-    let allData = [];
-    let currentTab = 'all';
+<script>
+const SHEET_ID  = '1weL4w0BzXGrYPIczj0kKYFdvE615OIMKSzIpt9Q1Yu0';
+const AS_URL    = 'https://script.google.com/macros/s/AKfycbxVMDPiywAB_J7dT5foF_Fja1K4blC_XHRHK9pWuGnZU0neLVp2h3D8lGBXXX9GR4JRJw/exec';
+const PASS      = 'moemzade2025';
+const BG        = ['#1D9E75','#BA7517','#993556','#185FA5','#534AB7','#3B6D11'];
+const CHART_COLORS = ['#0F6E56','#1D9E75','#4ECFA0','#534AB7','#BA7517','#993556','#185FA5','#3B6D11','#E24B4A','#EF9F27'];
 
-    function colorIdx(n){let h=0;for(let c of n)h=(h*31+c.charCodeAt(0))&0xffffffff;return Math.abs(h)%6;}
-    function initials(n){return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+let allData=[], currentTab='all', sortCol='', sortDir=1, modalRow=null;
+let catChartInst=null, regChartInst=null, lineChartInst=null;
 
-    function doLogin(){
-      const p=document.getElementById('passInput').value;
-      if(p===ADMIN_PASS){
-        document.getElementById('loginWrap').style.display='none';
-        document.getElementById('adminWrap').style.display='block';
-        loadData();
-      } else {
-        document.getElementById('loginErr').style.display='block';
-      }
-    }
-    function doLogout(){
-      document.getElementById('loginWrap').style.display='flex';
-      document.getElementById('adminWrap').style.display='none';
-      document.getElementById('passInput').value='';
-    }
+function ci(n){let h=0;for(let c of n)h=(h*31+c.charCodeAt(0))&0xffffffff;return Math.abs(h)%6;}
+function initials(n){return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
 
-    async function loadData(){
-      const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=teachers&t=${Date.now()}`;
-      try{
-        const res=await fetch(url);
-        const text=await res.text();
-        const json=JSON.parse(text.substring(47).slice(0,-2));
-        allData=json.table.rows.map((row,i)=>({
-          rowNum: i+2,
-          id:       row.c[0]?.v||'',
-          name:     row.c[1]?.v||'',
-          category: row.c[2]?.v||'',
-          subcat:   row.c[3]?.v||'',
-          region:   row.c[4]?.v||'',
-          price:    row.c[5]?.v||'',
-          phone:    row.c[6]?.v||'',
-          date:     row.c[12]?.v||'',
-          approved: String(row.c[13]?.v||'').toLowerCase(),
-        })).filter(t=>t.name && String(t.id)!=='001');
-        updateStats();
-        renderTable();
-      } catch(e){console.error(e);}
-    }
+function doLogin(){
+  if(document.getElementById('passInput').value===PASS){
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('adminWrap').style.display='block';
+    loadData();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('passInput').value='';
+  }
+}
+function doLogout(){
+  document.getElementById('loginWrap').style.display='flex';
+  document.getElementById('adminWrap').style.display='none';
+  document.getElementById('passInput').value='';
+}
 
-    function updateStats(){
-      const pend=allData.filter(t=>t.approved!=='კი');
-      const appr=allData.filter(t=>t.approved==='კი');
-      const cats=new Set(allData.map(t=>t.category).filter(Boolean));
-      document.getElementById('sTot').textContent=allData.length;
-      document.getElementById('sPend').textContent=pend.length;
-      document.getElementById('sApp').textContent=appr.length;
-      document.getElementById('sCat').textContent=cats.size;
-    }
+async function loadData(){
+  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=teachers&t=${Date.now()}`;
+  try{
+    const res=await fetch(url);
+    const text=await res.text();
+    const json=JSON.parse(text.substring(47).slice(0,-2));
+    allData=json.table.rows.map((row,i)=>({
+      rowNum:i+2,
+      id:String(row.c[0]?.v||''),
+      name:row.c[1]?.v||'',
+      category:row.c[2]?.v||'',
+      subcat:row.c[3]?.v||'',
+      region:row.c[4]?.v||'',
+      price:row.c[5]?.v||'',
+      phone:row.c[6]?.v||'',
+      instagram:row.c[7]?.v||'',
+      facebook:row.c[8]?.v||'',
+      desc:row.c[9]?.v||'',
+      online:row.c[10]?.v||'',
+      photo:row.c[11]?.v||'',
+      date:row.c[12]?.v||'',
+      approved:String(row.c[13]?.v||'').toLowerCase(),
+      checked:false,
+    })).filter(t=>t.name && t.id!=='001' && t.id!=='1');
+    updateStats();
+    renderCharts();
+    renderTable();
+  } catch(e){console.error(e);}
+}
 
-    function setTab(tab,el){
-      currentTab=tab;
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      el.classList.add('active');
-      renderTable();
-    }
+function updateStats(){
+  const p=allData.filter(t=>t.approved!=='კი').length;
+  const a=allData.filter(t=>t.approved==='კი').length;
+  const cats=new Set(allData.map(t=>t.category).filter(Boolean));
+  document.getElementById('sTot').textContent=allData.length;
+  document.getElementById('sPend').textContent=p;
+  document.getElementById('sApp').textContent=a;
+  document.getElementById('sCat').textContent=cats.size;
+}
 
-    function renderTable(){
-      let data=allData;
-      if(currentTab==='pending') data=allData.filter(t=>t.approved!=='კი');
-      if(currentTab==='approved') data=allData.filter(t=>t.approved==='კი');
+function renderCharts(){
+  // Categories bar
+  const catCount={};
+  allData.forEach(t=>{if(t.category){catCount[t.category]=(catCount[t.category]||0)+1;}});
+  const catSorted=Object.entries(catCount).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  if(catChartInst) catChartInst.destroy();
+  catChartInst=new Chart(document.getElementById('catChart'),{
+    type:'bar',
+    data:{labels:catSorted.map(e=>e[0]),datasets:[{data:catSorted.map(e=>e[1]),backgroundColor:CHART_COLORS,borderRadius:6,borderSkipped:false}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}},x:{ticks:{font:{size:10}}}},maintainAspectRatio:false}
+  });
 
-      const tbody=document.getElementById('adminTbody');
-      const mCards=document.getElementById('mobileCards');
+  // Regions doughnut
+  const regCount={};
+  allData.forEach(t=>{if(t.region){regCount[t.region]=(regCount[t.region]||0)+1;}});
+  const regSorted=Object.entries(regCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(regChartInst) regChartInst.destroy();
+  regChartInst=new Chart(document.getElementById('regChart'),{
+    type:'doughnut',
+    data:{labels:regSorted.map(e=>e[0]),datasets:[{data:regSorted.map(e=>e[1]),backgroundColor:CHART_COLORS,borderWidth:0}]},
+    options:{plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}}},maintainAspectRatio:false}
+  });
 
-      if(!data.length){
-        tbody.innerHTML='<tr class="empty-row"><td colspan="6">ჩანაწერები არ მოიძებნა</td></tr>';
-        mCards.innerHTML='<div style="text-align:center;padding:40px;color:#aaa;font-size:13px;">ჩანაწერები არ მოიძებნა</div>';
-        return;
-      }
+  // Registrations line (last 7 days)
+  const days=[];
+  const counts=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const ds=d.toLocaleDateString('ka-GE');
+    days.push(d.toLocaleDateString('en',{month:'short',day:'numeric'}));
+    counts.push(allData.filter(t=>t.date===ds||t.date?.includes(d.toISOString().split('T')[0])).length);
+  }
+  if(lineChartInst) lineChartInst.destroy();
+  lineChartInst=new Chart(document.getElementById('lineChart'),{
+    type:'line',
+    data:{labels:days,datasets:[{data:counts,borderColor:'#0F6E56',backgroundColor:'rgba(15,110,86,.08)',fill:true,tension:.4,pointBackgroundColor:'#0F6E56',pointRadius:4}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}},x:{ticks:{font:{size:10}}}},maintainAspectRatio:false}
+  });
+}
 
-      const isApproved=t=>t.approved==='კი';
-      const statusBadge=t=>isApproved(t)
-        ?'<span class="status-badge status-approved">დამტკიცებული</span>'
-        :'<span class="status-badge status-pending">მოლოდინი</span>';
-      const actionBtns=t=>isApproved(t)
-        ?`<div class="action-btns"><button class="btn-reject" onclick="rejectTeacher('${t.rowNum}','${t.name}')">გაუქმება</button><button class="btn-view" onclick="window.open('teacher.html?id=${allData.indexOf(t)}','_blank')">პროფილი</button></div>`
-        :`<div class="action-btns"><button class="btn-approve" onclick="approveTeacher('${t.rowNum}','${t.name}')">✓ დამტკიცება</button><button class="btn-reject" onclick="rejectTeacher('${t.rowNum}','${t.name}')">✕</button></div>`;
+function getFiltered(){
+  const q=document.getElementById('tableSearch')?.value.toLowerCase().trim()||'';
+  let d=allData;
+  if(currentTab==='pending') d=d.filter(t=>t.approved!=='კი');
+  if(currentTab==='approved') d=d.filter(t=>t.approved==='კი');
+  if(q) d=d.filter(t=>t.name.toLowerCase().includes(q)||t.category.toLowerCase().includes(q)||(t.subcat||'').toLowerCase().includes(q)||t.region.toLowerCase().includes(q));
+  if(sortCol) d=[...d].sort((a,b)=>{const av=String(a[sortCol]||'').toLowerCase(),bv=String(b[sortCol]||'').toLowerCase();return av<bv?-sortDir:av>bv?sortDir:0;});
+  return d;
+}
 
-      tbody.innerHTML=data.map(t=>`
-        <tr>
-          <td><div class="teacher-mini">
-            <div class="mini-av" style="background:${BG_COLS[colorIdx(t.name)]}">${initials(t.name)}</div>
-            <div><div class="mini-name">${t.name}</div><div class="mini-sub">${t.date||'—'}</div></div>
-          </div></td>
-          <td>${t.subcat||t.category||'—'}</td>
-          <td>${t.region||'—'}</td>
-          <td>${t.price?t.price+'₾':'—'}</td>
-          <td>${statusBadge(t)}</td>
-          <td>${actionBtns(t)}</td>
-        </tr>`).join('');
+function renderTable(){
+  const data=getFiltered();
+  const tbody=document.getElementById('adminTbody');
+  if(!data.length){tbody.innerHTML=`<tr><td class="empty-td" colspan="8">ჩანაწერები ვერ მოიძებნა</td></tr>`;return;}
+  tbody.innerHTML=data.map(t=>`
+    <tr>
+      <td class="check-col"><input type="checkbox" ${t.checked?'checked':''} onchange="toggleCheck('${t.id}',this)"></td>
+      <td style="cursor:pointer;" onclick="openModal('${t.id}')">
+        <div class="teacher-mini">
+          ${t.photo?`<img src="${t.photo}" style="width:34px;height:34px;border-radius:9px;object-fit:cover;flex-shrink:0;">`:`<div class="mini-av" style="background:${BG[ci(t.name)]}">${initials(t.name)}</div>`}
+          <div><div class="mini-name">${t.name}</div><div class="mini-sub">${t.phone||''}</div></div>
+        </div>
+      </td>
+      <td>${t.subcat||t.category||'—'}</td>
+      <td>${t.region||'—'}</td>
+      <td>${t.price?t.price+'₾':'—'}</td>
+      <td style="white-space:nowrap;">${t.date||'—'}</td>
+      <td>${t.approved==='კი'?'<span class="sb sb-a">დამტკიცებული</span>':'<span class="sb sb-p">მოლოდინი</span>'}</td>
+      <td><div class="act">
+        ${t.approved!=='კი'?`<button class="btn-a" onclick="approveTeacher('${t.id}','${t.name}')">✓</button>`:''}
+        <button class="btn-r" onclick="rejectTeacher('${t.id}','${t.name}')">${t.approved==='კი'?'გაუქმება':'✕'}</button>
+        <button class="btn-v" onclick="openModal('${t.id}')">👁</button>
+      </div></td>
+    </tr>`).join('');
+  updateBulkBtn();
+}
 
-      mCards.innerHTML=data.map(t=>`
-        <div class="m-card">
-          <div class="m-card-top">
-            <div class="teacher-mini">
-              <div class="mini-av" style="background:${BG_COLS[colorIdx(t.name)]}">${initials(t.name)}</div>
-              <div><div class="mini-name">${t.name}</div><div class="mini-sub">${t.subcat||t.category} · ${t.region}</div></div>
-            </div>
-            ${statusBadge(t)}
-          </div>
-          <div class="m-card-actions">${actionBtns(t)}</div>
-        </div>`).join('');
-    }
+function sortBy(col){
+  if(sortCol===col) sortDir*=-1; else{sortCol=col;sortDir=1;}
+  document.querySelectorAll('th').forEach(th=>{th.classList.remove('sorted-asc','sorted-desc');});
+  const headers=['','name','category','region','price','date','',''];
+  const idx=headers.indexOf(col);
+  if(idx>=0){const ths=document.querySelectorAll('th');if(ths[idx])ths[idx].classList.add(sortDir===1?'sorted-asc':'sorted-desc');}
+  renderTable();
+}
 
-    async function approveTeacher(rowNum, name){
-      if(!confirm(`დაამტკიცო "${name}"?`)) return;
-      try{
-        await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({action:'approve',row:parseInt(rowNum)})});
-        await loadData();
-      } catch(e){ alert('შეცდომა — Sheets-ში ხელით შეცვალე'); }
-    }
+function setTab(tab,el){currentTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderTable();}
 
-    async function rejectTeacher(rowNum, name){
-      if(!confirm(`გაუუქმდეს "${name}"?`)) return;
-      try{
-        await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({action:'reject',row:parseInt(rowNum)})});
-        await loadData();
-      } catch(e){ alert('შეცდომა — Sheets-ში ხელით შეცვალე'); }
-    }
-  </script>
+function toggleCheck(id,cb){
+  const t=allData.find(t=>t.id===id);
+  if(t) t.checked=cb.checked;
+  updateBulkBtn();
+}
+function toggleAll(cb){
+  getFiltered().forEach(t=>{t.checked=cb.checked;});
+  renderTable();
+  updateBulkBtn();
+}
+function updateBulkBtn(){
+  const n=allData.filter(t=>t.checked&&t.approved!=='კი').length;
+  document.getElementById('bulkCount').textContent=n;
+  document.getElementById('bulkBtn').classList.toggle('show',n>0);
+}
+async function bulkApprove(){
+  const sel=allData.filter(t=>t.checked&&t.approved!=='კი');
+  if(!sel.length) return;
+  if(!confirm(`${sel.length} მასწავლებელი დამტკიცდეს?`)) return;
+  for(const t of sel){
+    await fetch(AS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'approve',row:t.rowNum})});
+  }
+  allData.forEach(t=>t.checked=false);
+  await loadData();
+}
+
+async function approveTeacher(id,name){
+  const t=allData.find(t=>t.id===id);
+  if(!t||!confirm(`დაამტკიცო "${name}"?`)) return;
+  await fetch(AS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'approve',row:t.rowNum})});
+  await loadData(); closeModal();
+}
+async function rejectTeacher(id,name){
+  const t=allData.find(t=>t.id===id);
+  if(!t||!confirm(`"${name}" — გაუუქმდეს?`)) return;
+  await fetch(AS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'reject',row:t.rowNum})});
+  await loadData(); closeModal();
+}
+
+function openModal(id){
+  const t=allData.find(t=>t.id===id);
+  if(!t) return;
+  modalRow=t;
+  document.getElementById('mAv').textContent=initials(t.name);
+  document.getElementById('mAv').style.background=BG[ci(t.name)];
+  document.getElementById('mName').textContent=t.name;
+  document.getElementById('mSub').textContent=(t.subcat||t.category)+' · '+(t.region||'');
+  document.getElementById('mCat').textContent=(t.subcat?t.subcat+' / ':'')+t.category||'—';
+  document.getElementById('mReg').textContent=t.region||'—';
+  document.getElementById('mPrice').textContent=t.price?t.price+'₾/სთ':'შეთ.';
+  document.getElementById('mPhone').textContent=t.phone||'—';
+  document.getElementById('mInsta').textContent=t.instagram?'@'+t.instagram.replace('@',''):'—';
+  document.getElementById('mOnline').textContent=t.online||'—';
+  document.getElementById('mDesc').textContent=t.desc||'—';
+  const ph=document.getElementById('mPhoto');
+  if(t.photo){ph.src=t.photo;ph.style.display='block';}else{ph.style.display='none';}
+  const apBtn=document.getElementById('mApproveBtn');
+  if(t.approved==='კი'){apBtn.textContent='✕ გაუქმება';apBtn.style.background='#E24B4A';apBtn.onclick=()=>rejectTeacher(t.id,t.name);}
+  else{apBtn.textContent='✓ დამტკიცება';apBtn.style.background='#0F6E56';apBtn.onclick=()=>approveTeacher(t.id,t.name);}
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');}
+
+function exportCSV(){
+  const headers=['ID','სახელი','კატეგორია','ქვეკატეგ.','რეგიონი','ფასი','ტელეფონი','Instagram','Facebook','ფორმატი','თარიღი','სტატუსი'];
+  const rows=allData.map(t=>[t.id,t.name,t.category,t.subcat,t.region,t.price,t.phone,t.instagram,t.facebook,t.online,t.date,t.approved==='კი'?'დამტკიცებული':'მოლოდინი']);
+  const csv='\uFEFF'+[headers,...rows].map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='moemzade_teachers_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+}
+</script>
 </body>
 </html>
