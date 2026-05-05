@@ -11,7 +11,7 @@
     .logo-img { height: 26px; width: auto; max-width: 100px; object-fit: contain; display: block; }
 
     /* ── HERO ── */
-    .hero { padding: 36px 0 48px; position: relative; overflow: hidden; }
+    .hero { padding: 36px 0 48px; position: relative; overflow: visible; z-index: 10; }
     .hero-blob  { position:absolute; top:-60px; right:-80px; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle,#9FE1CB 0%,transparent 70%); opacity:.35; pointer-events:none; }
     .hero-blob2 { position:absolute; bottom:-80px; left:-60px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,#9FE1CB 0%,transparent 70%); opacity:.2; pointer-events:none; }
 
@@ -23,59 +23,82 @@
     .hero-sub { font-size:14px; color:#666; line-height:1.7; margin-bottom:28px; max-width:460px; }
 
     /* ── SEARCH — MOBILE FIRST ── */
+    /* ── SEARCH BAR ── */
     .search-bar {
-      background:#fff;
-      border:1px solid #d8d8d0;
-      border-radius:14px;
-      max-width:620px;
-      overflow:visible;
-      position:relative;
+      background: #fff;
+      border: 1px solid #d8d8d0;
+      border-radius: 14px;
+      max-width: 620px;
+      position: relative;
+      z-index: 200;
     }
-
-    /* mobile: stacked */
-    .sb-inner { display:flex; flex-direction:column; }
-
+    .sb-inner {
+      display: flex;
+      flex-direction: column;
+    }
     .sb-item {
-      padding:13px 16px;
-      cursor:pointer;
-      position:relative;
-      border-bottom:0.5px solid #ebebE6;
+      padding: 13px 16px;
+      cursor: pointer;
+      position: relative;
+      border-bottom: 0.5px solid #ebebE6;
     }
-    .sb-item:last-of-type { border-bottom:none; }
-
-    .sb-label { font-size:10px; font-weight:600; color:#aaa; letter-spacing:.5px; margin-bottom:3px; }
-    .sb-val   { font-size:14px; color:#1a1a1a; }
-
+    .sb-label { font-size: 10px; font-weight: 600; color: #aaa; letter-spacing: .5px; margin-bottom: 3px; }
+    .sb-val   { font-size: 14px; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: clip; }
     .sb-btn {
-      width:100%; background:#0F6E56; color:#fff; border:none;
-      border-radius:0 0 12px 12px;
-      padding:14px; font-size:14px; font-weight:600;
-      font-family:'Noto Sans Georgian',sans-serif;
-      cursor:pointer; transition:background .15s;
+      background: #0F6E56; color: #fff; border: none;
+      border-radius: 0 0 12px 12px;
+      padding: 14px 20px; font-size: 14px; font-weight: 600;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; transition: background .15s;
+      display: block; width: 100%;
     }
-    .sb-btn:hover { background:#0a5a43; }
+    .sb-btn:hover { background: #0a5a43; }
 
-    /* dropdown */
+    /* DROPDOWN */
     .dropdown {
-      display:none; position:absolute;
-      top:calc(100% + 8px); left:0;
-      background:#fff; border:.5px solid #d8d8d0;
-      border-radius:12px; min-width:220px; max-height:260px;
-      overflow-y:auto; z-index:300;
-      box-shadow:0 8px 32px rgba(0,0,0,0.12);
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px); left: 0;
+      background: #fff;
+      border: 0.5px solid #d8d8d0;
+      border-radius: 12px;
+      min-width: 220px; max-height: 280px;
+      overflow-y: auto;
+      z-index: 9999;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
     }
-    .dropdown.open { display:block; }
-    .dd-opt { padding:10px 16px; font-size:13px; color:#333; cursor:pointer; font-family:'Noto Sans Georgian',sans-serif; }
-    .dd-opt:hover { background:#f5f5f0; }
-    .dd-opt.active { color:#0F6E56; font-weight:600; background:#f0fdf8; }
+    .dropdown.open { display: block; }
+    .dd-opt {
+      padding: 11px 16px; font-size: 13px; color: #333;
+      cursor: pointer; font-family: 'Noto Sans Georgian', sans-serif;
+      white-space: nowrap;
+    }
+    .dd-opt:hover  { background: #f5f5f0; }
+    .dd-opt.active { color: #0F6E56; font-weight: 600; background: #f0fdf8; }
 
-    /* desktop: horizontal */
-    @media(min-width:600px){
-      .sb-inner { flex-direction:row; align-items:stretch; }
-      .sb-item  { flex:1; border-bottom:none; border-right:.5px solid #ebebE6; }
-      .sb-item:last-of-type { border-right:none; }
-      .sb-item:hover { background:#f8f8f5; border-radius:12px; }
-      .sb-btn { width:auto; border-radius:0 12px 12px 0; padding:0 24px; font-size:13px; }
+    /* DESKTOP: horizontal */
+    @media (min-width: 600px) {
+      .sb-inner {
+        flex-direction: row;
+        align-items: stretch;
+      }
+      .sb-item {
+        flex: 1;
+        border-bottom: none;
+        border-right: 0.5px solid #ebebE6;
+        min-width: 0;
+      }
+      .sb-item:hover { background: #f8f8f5; border-radius: 12px; }
+      .sb-val { overflow: hidden; text-overflow: ellipsis; }
+      .sb-btn {
+        width: auto;
+        flex-shrink: 0;
+        border-radius: 0 12px 12px 0;
+        padding: 0 24px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+      }
     }
 
     /* ── STATS ── */
@@ -249,7 +272,7 @@
   </section>
 
   <!-- CATEGORIES -->
-  <section class="section" id="categories">
+  <section class="section" id="categories" style="position:relative;z-index:1;">
     <div class="container">
       <div class="sec-head">
         <h2 class="sec-title">კატეგორიები</h2>
@@ -273,7 +296,7 @@
   </section>
 
   <!-- FEATURED -->
-  <section class="section bg-alt">
+  <section class="section bg-alt" style="position:relative;z-index:1;">
     <div class="container">
       <div class="sec-head">
         <h2 class="sec-title">ბოლოს დამატებული</h2>
