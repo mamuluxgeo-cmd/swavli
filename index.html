@@ -130,6 +130,57 @@
     .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
     .footer-copy{font-size:12px;color:#aaa;}
 
+    /* ── SEARCH BAR VERTICAL ── */
+    .search-bar-v {
+      background: #fff;
+      border: 1px solid #d8d8d0;
+      border-radius: 14px;
+      max-width: 520px;
+      overflow: visible;
+      position: relative;
+      z-index: 200;
+    }
+    .sbv-item {
+      padding: 14px 18px;
+      cursor: pointer;
+      position: relative;
+    }
+    .sbv-item:hover { background: #f8f8f5; }
+    .sbv-item:first-child:hover { border-radius: 14px 14px 0 0; }
+    .sbv-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #aaa;
+      letter-spacing: .4px;
+      margin-bottom: 4px;
+    }
+    .sbv-val {
+      font-size: 15px;
+      color: #1a1a1a;
+      font-weight: 500;
+    }
+    .sbv-divider {
+      height: .5px;
+      background: #ebebE6;
+      margin: 0 18px;
+    }
+    .sbv-btn {
+      display: block;
+      width: 100%;
+      background: #0F6E56;
+      color: #fff;
+      border: none;
+      border-radius: 0 0 12px 12px;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background .15s;
+    }
+    .sbv-btn:hover { background: #0a5a43; }
+
     .loading-state,.empty-state{grid-column:1/-1;text-align:center;padding:40px;color:#aaa;font-size:14px;}
   </style>
 </head>
@@ -162,29 +213,29 @@
       <p class="hero-sub">გიტარიდან პროგრამირებამდე, ნეილ არტიდან ქართულ ცეკვამდე — ყველა რეგიონი, სრულიად უფასო.</p>
 
       <div class="hero-search-wrap">
-        <div class="search-bar">
-          <div id="sbInner" style="display:flex;flex-direction:column;">
-            <div id="sbCat" style="padding:13px 16px;cursor:pointer;position:relative;border-bottom:.5px solid #ebebE6;" onclick="toggleDD('ddCat',event)">
-              <div style="font-size:10px;font-weight:600;color:#aaa;letter-spacing:.5px;margin-bottom:3px;">სფერო</div>
-              <div id="selCat" style="font-size:14px;color:#1a1a1a;">ყველა კატეგორია</div>
-              <div class="dropdown" id="ddCat"></div>
-            </div>
-            <div id="sbReg" style="padding:13px 16px;cursor:pointer;position:relative;border-bottom:.5px solid #ebebE6;" onclick="toggleDD('ddReg',event)">
-              <div style="font-size:10px;font-weight:600;color:#aaa;letter-spacing:.5px;margin-bottom:3px;">რეგიონი</div>
-              <div id="selReg" style="font-size:14px;color:#1a1a1a;">ყველა რეგიონი</div>
-              <div class="dropdown" id="ddReg"></div>
-            </div>
-            <div id="sbFmt" style="padding:13px 16px;cursor:pointer;position:relative;" onclick="toggleDD('ddFmt',event)">
-              <div style="font-size:10px;font-weight:600;color:#aaa;letter-spacing:.5px;margin-bottom:3px;">ფორმატი</div>
-              <div id="selFmt" style="font-size:14px;color:#1a1a1a;">ნებისმიერი</div>
-              <div class="dropdown" id="ddFmt">
-                <div class="dd-opt active" data-val="" onclick="pickOption('selFmt','ddFmt','fmt',this,event)">ნებისმიერი</div>
-                <div class="dd-opt" data-val="პირადად" onclick="pickOption('selFmt','ddFmt','fmt',this,event)">🏠 პირადად</div>
-                <div class="dd-opt" data-val="ონლაინ" onclick="pickOption('selFmt','ddFmt','fmt',this,event)">🌐 ონლაინ</div>
-              </div>
-            </div>
-            <button onclick="doSearch()" style="background:#0F6E56;color:#fff;border:none;border-radius:0 0 12px 12px;padding:14px;font-size:14px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;width:100%;">ძიება →</button>
+        <div class="search-bar-v">
+          <div class="sbv-item" onclick="toggleDD('ddCat',event)">
+            <div class="sbv-label">სფერო</div>
+            <div class="sbv-val" id="selCat">ყველა კატეგორია</div>
+            <div class="dropdown" id="ddCat"></div>
           </div>
+          <div class="sbv-divider"></div>
+          <div class="sbv-item" onclick="toggleDD('ddReg',event)">
+            <div class="sbv-label">რეგიონი</div>
+            <div class="sbv-val" id="selReg">ყველა რეგიონი</div>
+            <div class="dropdown" id="ddReg"></div>
+          </div>
+          <div class="sbv-divider"></div>
+          <div class="sbv-item" onclick="toggleDD('ddFmt',event)">
+            <div class="sbv-label">ფორმატი</div>
+            <div class="sbv-val" id="selFmt">ნებისმიერი</div>
+            <div class="dropdown" id="ddFmt">
+              <div class="dd-opt active" data-val="" onclick="pickOption('selFmt','ddFmt','fmt',this,event)">ნებისმიერი</div>
+              <div class="dd-opt" data-val="პირადად" onclick="pickOption('selFmt','ddFmt','fmt',this,event)">🏠 პირადად</div>
+              <div class="dd-opt" data-val="ონლაინ" onclick="pickOption('selFmt','ddFmt','fmt',this,event)">🌐 ონლაინ</div>
+            </div>
+          </div>
+          <button class="sbv-btn" onclick="doSearch()">ძიება →</button>
         </div>
       </div>
 
@@ -260,35 +311,22 @@
       const sbFmt=document.getElementById('sbFmt');
       const btn=inner?.querySelector('button');
       if(!inner) return;
-      if(window.innerWidth>=600){
-        inner.style.cssText='display:flex;flex-direction:row;align-items:stretch;';
-        [sbCat,sbReg,sbFmt].forEach(el=>{
-          if(el) el.style.cssText='padding:12px 16px;cursor:pointer;position:relative;flex:1;min-width:0;border-bottom:none;border-right:.5px solid #ebebE6;overflow:hidden;';
-        });
-        if(sbFmt) sbFmt.style.borderRight='none';
-        if(btn) btn.style.cssText="background:#0F6E56;color:#fff;border:none;border-radius:0 12px 12px 0;padding:0 26px;font-size:13px;font-weight:600;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;white-space:nowrap;flex-shrink:0;";
-        // Fix text on desktop - single line
-        ['selCat','selReg','selFmt'].forEach(id=>{
-          const el=document.getElementById(id);
-          if(el){el.style.cssText='font-size:13px;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';}
-        });
-      } else {
-        // Mobile: clean vertical stack
-        inner.style.cssText='display:flex;flex-direction:column;';
-        sbCat.style.cssText='padding:14px 18px;cursor:pointer;position:relative;border-bottom:.5px solid #ebebE6;';
-        sbReg.style.cssText='padding:14px 18px;cursor:pointer;position:relative;border-bottom:.5px solid #ebebE6;';
-        sbFmt.style.cssText='padding:14px 18px;cursor:pointer;position:relative;';
-        if(btn) btn.style.cssText="background:#0F6E56;color:#fff;border:none;border-radius:0 0 12px 12px;padding:15px;font-size:14px;font-weight:700;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;width:100%;";
-        // Mobile text - normal size, no truncation
-        ['selCat','selReg','selFmt'].forEach(id=>{
-          const el=document.getElementById(id);
-          if(el){el.style.cssText='font-size:15px;color:#1a1a1a;font-weight:500;';}
-        });
-      }
+      // ყოველთვის ჰორიზონტალური
+      inner.style.cssText='display:flex;flex-direction:row;align-items:stretch;';
+      [sbCat,sbReg,sbFmt].forEach(el=>{
+        if(el) el.style.cssText='padding:11px 10px;cursor:pointer;position:relative;flex:1;min-width:0;border-bottom:none;border-right:.5px solid #ebebE6;overflow:hidden;';
+      });
+      if(sbFmt) sbFmt.style.borderRight='none';
+      if(btn) btn.style.cssText="background:#0F6E56;color:#fff;border:none;border-radius:0 12px 12px 0;padding:0 14px;font-size:13px;font-weight:700;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;white-space:nowrap;flex-shrink:0;";
+      ['selCat','selReg','selFmt'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el){el.style.cssText='font-size:12px;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;';}
+      });
+      // label ზომა
+      document.querySelectorAll('#sbCat .sb-label,#sbReg .sb-label,#sbFmt .sb-label,[id^="sb"] > div:first-child').forEach(el=>{
+        el.style.fontSize='9px';
+      });
     }
-    window.addEventListener('resize', makeSearchResponsive);
-    document.addEventListener('DOMContentLoaded', makeSearchResponsive);
-
     function toggleDD(ddId,e){
       e.stopPropagation();
       const dd=document.getElementById(ddId);
