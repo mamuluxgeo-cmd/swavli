@@ -4,58 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>მასწავლებლები — Swavli</title>
-
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
   <style>
-    body[data-page="teachers"] {
-      background: #F4F4F0;
-    }
+    body[data-page="teachers"] { background: #F4F4F0; }
+    .logo-img { height: 28px; width: auto; max-width: 110px; object-fit: contain; display: block; }
 
-    /* TOP BAR FIX */
+    /* TOP BAR */
     .page-hero {
-      padding: 16px 0;
       background: #fff;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
+      border-bottom: 1px solid #ebebE6;
+      padding: 14px 0;
+      position: sticky; top: 60px; z-index: 50;
     }
-
     .page-hero .container {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      max-width: 1060px; margin: 0 auto; padding: 0 20px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
     }
+    .ph-title { font-size: 15px; font-weight: 700; color: #111; white-space: nowrap; }
+    .ph-right { margin-left: auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .results-count { font-size: 12px; color: #999; white-space: nowrap; }
 
-    .page-hero h1 {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0;
-      white-space: nowrap;
+    /* FILTER TRIGGER PILLS */
+    .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid #ddd; background: #fff;
+      font-size: 12.5px; color: #444;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; transition: 0.15s; white-space: nowrap;
     }
+    .filter-pill:hover { border-color: #0F6E56; color: #0F6E56; }
+    .filter-pill.active { border-color: #0F6E56; background: #E8F8F3; color: #0F6E56; font-weight: 600; }
+    .filter-pill-arrow { font-size: 10px; opacity: 0.5; }
 
-    .filters-bar {
-      display: flex;
-      gap: 8px;
+    /* FILTER OVERLAY */
+    .filter-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 200;
+      backdrop-filter: blur(2px);
     }
+    .filter-overlay.open { display: flex; align-items: flex-end; justify-content: center; }
 
-    .filter-select {
-      height: 38px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      background: #F7F7F3;
-      padding: 0 10px;
-      font-size: 12px;
+    /* FILTER PANEL */
+    .filter-panel {
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 640px;
+      padding: 24px 24px 40px;
+      animation: slideUp 0.25s ease;
+      max-height: 85vh; overflow-y: auto;
     }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    .fp-handle {
+      width: 40px; height: 4px; border-radius: 4px;
+      background: #ddd; margin: 0 auto 20px; display: block;
+    }
+    .fp-title { font-size: 17px; font-weight: 700; color: #111; margin-bottom: 20px; }
+    .fp-section { margin-bottom: 24px; }
+    .fp-section-label {
+      font-size: 11px; font-weight: 700; color: #aaa;
+      letter-spacing: 0.6px; margin-bottom: 12px;
+    }
+    .fp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .fp-chip {
+      padding: 8px 16px; border-radius: 999px;
+      border: 1px solid #e0e0e0; background: #fafaf8;
+      font-size: 13px; color: #444;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; transition: 0.15s;
+    }
+    .fp-chip:hover { border-color: #0F6E56; color: #0F6E56; }
+    .fp-chip.sel { border-color: #0F6E56; background: #E8F8F3; color: #0F6E56; font-weight: 600; }
 
-    .results-count {
-      font-size: 12px;
-      color: #888;
+    .fp-footer {
+      display: flex; gap: 10px; margin-top: 8px;
+      padding-top: 20px; border-top: 1px solid #f0f0ec;
     }
+    .fp-clear {
+      flex: 1; background: #f4f4f0; color: #555; border: none;
+      border-radius: 12px; padding: 13px;
+      font-size: 13px; font-weight: 600;
+      font-family: 'Noto Sans Georgian', sans-serif; cursor: pointer;
+    }
+    .fp-apply {
+      flex: 2; background: #0F6E56; color: #fff; border: none;
+      border-radius: 12px; padding: 13px;
+      font-size: 14px; font-weight: 700;
+      font-family: 'Noto Sans Georgian', sans-serif; cursor: pointer;
+    }
+    .fp-apply:hover { background: #0a5a43; }
 
     /* GRID */
+    .section { padding: 20px 0 60px; }
+    .section .container { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
     .teachers-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -64,176 +110,121 @@
 
     /* CARD */
     .teacher-card {
-      background: #fff;
-      border-radius: 14px;
+      background: #fff; border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-      transition: 0.2s;
-      cursor: pointer;
-      animation: fadeUp 0.3s ease;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+      cursor: pointer; transition: 0.2s;
     }
-
-    .teacher-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.12);
-    }
-
-    /* IMAGE 1:1 */
-    .tc-img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      position: relative;
-      overflow: hidden;
-    }
-
+    .teacher-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
+    .tc-img { width: 100%; aspect-ratio: 1/1; position: relative; overflow: hidden; }
     .tc-img img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
     }
-
     .tc-avatar {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      font-weight: 700;
-      color: #fff;
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 700; color: #fff;
     }
-
-    /* BODY */
-    .tc-body {
-      padding: 10px 12px 12px;
-    }
-
-    .tc-name {
-      font-weight: 700;
-      font-size: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .tc-sub {
-      font-size: 11px;
-      color: #888;
-      margin-bottom: 6px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .tc-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-    }
-
-    .tc-price {
-      color: #0F6E56;
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    .tc-region {
-      font-size: 10px;
-      color: #aaa;
-      background: #f4f4f0;
-      padding: 2px 8px;
-      border-radius: 20px;
-      max-width: 90px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    .tc-body { padding: 10px 12px 12px; }
+    .tc-name { font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tc-sub  { font-size: 11px; color: #888; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tc-footer { display: flex; justify-content: space-between; align-items: center; }
+    .tc-price { color: #0F6E56; font-weight: 700; font-size: 13px; }
+    .tc-region { font-size: 10px; color: #aaa; background: #f4f4f0; padding: 2px 8px; border-radius: 20px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     /* PAGINATION */
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 32px;
-      padding-bottom: 40px;
-    }
-
+    .pagination { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 28px; }
     .page-btn {
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      background: #fff;
-      font-size: 13px;
-      font-family: 'Noto Sans Georgian', sans-serif;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid #ddd; background: #fff;
+      font-size: 13px; font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: 0.15s;
     }
-
     .page-btn:hover { border-color: #0F6E56; color: #0F6E56; }
     .page-btn.active { background: #0F6E56; color: #fff; border-color: #0F6E56; }
-    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* ANIMATION */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 60px; color: #aaa; font-size: 14px; }
 
-    /* TABLET */
-    @media (max-width: 900px) {
-      .teachers-grid { grid-template-columns: repeat(4, 1fr); }
-    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .teacher-card { animation: fadeUp 0.3s ease; }
 
-    /* MOBILE */
-    @media (max-width: 600px) {
-      .page-hero .container { flex-direction: column; align-items: flex-start; }
-      .teachers-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    }
+    @media (max-width: 960px) { .teachers-grid { grid-template-columns: repeat(4,1fr); } }
+    @media (max-width: 700px) { .teachers-grid { grid-template-columns: repeat(2,1fr); gap:10px; } }
+    @media (max-width: 400px) { .teachers-grid { grid-template-columns: repeat(2,1fr); } }
   </style>
 </head>
-
 <body data-page="teachers">
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="index.html" class="logo"><img src="logo.png" alt="Swavli" class="logo-img"></a>
-
-    <div class="nav-links">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="Swavli" class="logo-img">
+      </a>
+      <div class="nav-links">
+        <a href="teachers.html">მასწავლებლები</a>
+        <a href="index.html#categories">კატეგორიები</a>
+        <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
       <a href="teachers.html">მასწავლებლები</a>
       <a href="index.html#categories">კატეგორიები</a>
-      <a href="register.html" class="btn-primary">+ დარეგისტრირება</a>
+      <a href="register.html">+ დარეგისტრირება</a>
+    </div>
+  </nav>
+
+  <!-- TOP BAR -->
+  <div class="page-hero">
+    <div class="container">
+      <div class="ph-title">მასწავლებლები</div>
+      <div class="ph-right">
+        <div class="filter-pills">
+          <button class="filter-pill" id="pillCat" onclick="openFilter('cat')">
+            <span id="pillCatLabel">ყველა სფერო</span>
+            <span class="filter-pill-arrow">▾</span>
+          </button>
+          <button class="filter-pill" id="pillReg" onclick="openFilter('reg')">
+            <span id="pillRegLabel">ყველა რეგიონი</span>
+            <span class="filter-pill-arrow">▾</span>
+          </button>
+          <button class="filter-pill" id="pillFmt" onclick="openFilter('fmt')">
+            <span id="pillFmtLabel">ნებისმიერი</span>
+            <span class="filter-pill-arrow">▾</span>
+          </button>
+        </div>
+        <div class="results-count" id="resultsCount"></div>
+      </div>
     </div>
   </div>
-</nav>
 
-<div class="page-hero">
-  <div class="container">
-    <h1>იპოვე მასწავლებელი</h1>
-
-    <div class="filters-bar">
-      <select id="filterCat" class="filter-select"></select>
-      <select id="filterReg" class="filter-select"></select>
+  <!-- FILTER OVERLAY -->
+  <div class="filter-overlay" id="filterOverlay" onclick="closeFilter()">
+    <div class="filter-panel" onclick="event.stopPropagation()">
+      <span class="fp-handle"></span>
+      <div class="fp-title" id="fpTitle">ფილტრი</div>
+      <div id="fpContent"></div>
+      <div class="fp-footer">
+        <button class="fp-clear" onclick="clearFilter()">გასუფთავება</button>
+        <button class="fp-apply" onclick="applyFilter()">შედეგების ჩვენება</button>
+      </div>
     </div>
-
-    <div id="resultsCount" class="results-count">იტვირთება...</div>
   </div>
-</div>
 
-<div class="section">
-  <div class="container">
-    <div class="teachers-grid" id="teachersList"></div>
-<div class="pagination" id="pagination"></div>
+  <div class="section">
+    <div class="container">
+      <div class="teachers-grid" id="teachersList">
+        <div class="empty-state">მასწავლებლები იტვირთება...</div>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
