@@ -55,29 +55,27 @@
       color: #888;
     }
 
-    /* GRID FIX */
+    /* GRID */
     .teachers-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, 260px);
-      gap: 22px;
-      justify-content: center;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
     }
 
     /* CARD */
     .teacher-card {
-      width: 260px;
       background: #fff;
-      border-radius: 18px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
       transition: 0.2s;
       cursor: pointer;
-      animation: fadeUp 0.4s ease;
+      animation: fadeUp 0.3s ease;
     }
 
     .teacher-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.12);
     }
 
     /* IMAGE 1:1 */
@@ -94,67 +92,110 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center top;
+    }
+
+    .tc-avatar {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
     }
 
     /* BODY */
     .tc-body {
-      padding: 14px;
+      padding: 10px 12px 12px;
     }
 
     .tc-name {
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .tc-sub {
-      font-size: 12px;
+      font-size: 11px;
       color: #888;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .tc-footer {
       display: flex;
       justify-content: space-between;
-      margin-top: 10px;
+      align-items: center;
+      margin-top: 6px;
     }
 
     .tc-price {
       color: #0F6E56;
       font-weight: 700;
+      font-size: 13px;
     }
 
     .tc-region {
-      font-size: 11px;
-      color: #777;
+      font-size: 10px;
+      color: #aaa;
+      background: #f4f4f0;
+      padding: 2px 8px;
+      border-radius: 20px;
+      max-width: 90px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+
+    /* PAGINATION */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding-bottom: 40px;
+    }
+
+    .page-btn {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fff;
+      font-size: 13px;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: 0.15s;
+    }
+
+    .page-btn:hover { border-color: #0F6E56; color: #0F6E56; }
+    .page-btn.active { background: #0F6E56; color: #fff; border-color: #0F6E56; }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* ANIMATION */
     @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* TABLET */
+    @media (max-width: 900px) {
+      .teachers-grid { grid-template-columns: repeat(4, 1fr); }
     }
 
     /* MOBILE */
-    @media (max-width: 760px) {
-      .page-hero .container {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .teachers-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .teacher-card {
-        width: 100%;
-        max-width: 340px;
-      }
+    @media (max-width: 600px) {
+      .page-hero .container { flex-direction: column; align-items: flex-start; }
+      .teachers-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     }
   </style>
 </head>
@@ -163,7 +204,7 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="logo">Swav<span>li</span></a>
+    <a href="index.html" class="logo"><img src="logo.png" alt="Swavli" class="logo-img"></a>
 
     <div class="nav-links">
       <a href="teachers.html">მასწავლებლები</a>
@@ -189,6 +230,7 @@
 <div class="section">
   <div class="container">
     <div class="teachers-grid" id="teachersList"></div>
+<div class="pagination" id="pagination"></div>
   </div>
 </div>
 
