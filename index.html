@@ -183,6 +183,22 @@
     }
     .sbv-btn:hover { background: #0a5a43; }
 
+
+    .logo-text-nav {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+      font-family: 'Noto Sans Georgian', sans-serif;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .logo-text-nav span {
+      color: #0F6E56;
+      font-weight: 500;
+    }
     .loading-state,.empty-state{grid-column:1/-1;text-align:center;padding:40px;color:#aaa;font-size:14px;}
   </style>
 </head>
@@ -190,7 +206,7 @@
 
   <nav class="nav">
     <div class="nav-inner">
-      <a href="index.html" class="logo"><img src="logo.svg" alt="Moemzade.ge" style="height:28px;width:auto;display:block;"></a>
+      <a href="index.html" class="logo-text-nav">moemzade<span>.ge</span></a>
       <div class="nav-links">
         <a href="teachers.html">მასწავლებლები</a>
         <a href="#categories">კატეგორიები</a>
@@ -300,7 +316,7 @@
 
   <footer class="footer">
     <div class="container footer-inner">
-      <a href="index.html"><img src="logo.svg" alt="Moemzade.ge" style="height:24px;width:auto;display:block;"></a>
+      <a href="index.html" class="logo-text-nav" style="font-size:16px;">moemzade<span>.ge</span></a>
       <p class="footer-copy">© 2025 Moemzade.ge — ყველა უფლება დაცულია</p>
     </div>
   </footer>
@@ -338,9 +354,12 @@
       closeAllDD();
       if(!isOpen){
         const rect=trigger.getBoundingClientRect();
-        dd.style.top=(rect.bottom+6)+'px';
+        const spaceBelow=window.innerHeight-rect.bottom;
+        const ddHeight=Math.min(300,spaceBelow-10);
+        dd.style.top=(rect.bottom+4)+'px';
         dd.style.left=rect.left+'px';
         dd.style.width=Math.max(rect.width,240)+'px';
+        dd.style.maxHeight=ddHeight+'px';
         dd.classList.add('open');
         document.getElementById('ddBackdrop').classList.add('open');
       }
