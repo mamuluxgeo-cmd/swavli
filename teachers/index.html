@@ -3,12 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="../">
   <title>მასწავლებლები — Moemzade</title>
   <script>
-    location.replace('../teachers.html' + location.search + location.hash);
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.dataset.page = 'teachers';
+    });
   </script>
 </head>
-<body>
-  <a href="../teachers.html">მასწავლებლების გვერდზე გადასვლა</a>
+<body data-page="teachers">
+  <script>
+    fetch('teachers.html')
+      .then(r => r.text())
+      .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        document.head.innerHTML = '<base href="../">' + doc.head.innerHTML;
+        document.body.innerHTML = doc.body.innerHTML;
+        document.body.dataset.page = 'teachers';
+        const s1 = document.createElement('script');
+        s1.src = 'script.js';
+        document.body.appendChild(s1);
+        const s2 = document.createElement('script');
+        s2.src = 'clean-routes.js';
+        document.body.appendChild(s2);
+      });
+  </script>
 </body>
 </html>
