@@ -3,12 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="../">
   <title>გახდი მასწავლებელი — Moemzade</title>
-  <script>
-    location.replace('../register.html' + location.search + location.hash);
-  </script>
 </head>
-<body>
-  <a href="../register.html">რეგისტრაციაზე გადასვლა</a>
+<body class="reg-page">
+  <script>
+    fetch('register.html')
+      .then(r => r.text())
+      .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        document.head.innerHTML = '<base href="../">' + doc.head.innerHTML;
+        document.body.innerHTML = doc.body.innerHTML;
+        document.body.className = 'reg-page';
+        const s1 = document.createElement('script');
+        s1.src = 'script.js';
+        document.body.appendChild(s1);
+        const s2 = document.createElement('script');
+        s2.src = 'clean-routes.js';
+        document.body.appendChild(s2);
+      });
+  </script>
 </body>
 </html>
