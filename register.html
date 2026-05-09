@@ -130,8 +130,8 @@
         <div class="step-header"><h2>პირადი ინფორმაცია</h2><p>გვეტყვი ვინ ხარ</p></div>
         <div class="form-body">
           <div class="fg">
-            <label>სახელი და გვარი / კომპანიის დასახელება <span>*</span></label>
-            <input type="text" id="name" placeholder="მაგ: ნინო ბერიძე , სტუდია სხარტი ....">
+            <label>სახელი და გვარი <span>*</span></label>
+            <input type="text" id="name" placeholder="მაგ: ნინო ბერიძე">
             <div class="err-msg" id="err-name">შეიყვანე სახელი და გვარი</div>
           </div>
           <div class="fg-row">
@@ -155,7 +155,7 @@
               <div class="err-msg" id="err-region">აირჩიე რეგიონი</div>
             </div>
             <div class="fg">
-              <label>ფასი (₾/საათი/თვეში) <span>*</span></label>
+              <label>ფასი (₾/საათი) <span>*</span></label>
               <input type="number" id="price" placeholder="მაგ: 40" min="0">
               <div class="err-msg" id="err-price">შეიყვანე ფასი</div>
             </div>
@@ -315,6 +315,9 @@
     function selectRadio(el) {
       document.querySelectorAll('.radio-item').forEach(r => r.classList.remove('selected'));
       el.classList.add('selected');
+      // must set checked so validateStep can find it
+      const inp = el.querySelector('input[type="radio"]');
+      if (inp) inp.checked = true;
     }
 
     let currentStep = 1;
